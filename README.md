@@ -28,6 +28,5 @@ You will need to install Python 3.7+. Once you've installed Python 3.7+, enter t
 ```
 pip install -r requirements
 ```
-^ FIXME: Write requirements file
 
 
