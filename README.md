@@ -19,6 +19,7 @@ TBD...
   * [docs](docs/): All documentation for the tool
   * [PLLPy](PLLPy/): TBD
   * [examples](examples/) TBD
+  * [tests](tests/) TBD
 
   TBD...
 
@@ -27,6 +28,5 @@ You will need to install Python 3.7+. Once you've installed Python 3.7+, enter t
 ```
 pip install -r requirements
 ```
-
 
 
