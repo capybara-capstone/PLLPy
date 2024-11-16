@@ -2,24 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
 
-
-
-# class Driver():
-#     def __init__(self):
-#         pass
-    
-#     def gen_wave()
-
 class Signal():
     def __init__(self, wave, fs):
         self.wave = wave
+        self.fs = fs
         self.rising_edges = self.find_rising_edges()
         self.falling_edges = self.find_falling_edges()
 
     def find_rising_edges(self):
         if self.wave[0] == 1:
-            return np.insert(np.append(np.where(np.diff(self.wave) > 0)[0],fs), 0, 0)
-        return np.append(np.where(np.diff(self.wave) > 0)[0],fs)
+            return np.insert(np.append(np.where(np.diff(self.wave) > 0)[0],self.fs), 0, 0)
+        return np.append(np.where(np.diff(self.wave) > 0)[0],self.fs)
     
     def find_falling_edges(self):
         return np.where(np.diff(self.wave) < 0)[0]
@@ -30,6 +23,7 @@ class LPD():
         self.in2:Signal = Signal(input_signal_2, fs)
         self.up = Signal(np.linspace(0, 0, fs, endpoint=False),fs)
         self.down = Signal(np.linspace(0, 0, fs, endpoint=False),fs)
+        self.phase_diff = None
 
     def get_wave_diff(self):
         
@@ -57,13 +51,17 @@ class LPD():
         self.down.falling_edges = self.down.find_falling_edges()
 
     def get_phase_diff(self):
+        delta = None
+        period = None
         for up_rising_edge_index in range(1,len(self.up.rising_edges)):
             period = self.up.rising_edges[up_rising_edge_index] - self.up.rising_edges[up_rising_edge_index-1]
             delta = self.up.falling_edges[up_rising_edge_index-1]-self.up.rising_edges[up_rising_edge_index-1]
-            print(np.rint(np.degrees((delta*2*np.pi)/period)))
-            
-    
-    def show_waves(self):
+        if delta != None and period != None:
+            self.phase_diff = np.rint(np.degrees((delta*2*np.pi)/period))
+        else:
+            self.phase_diff = None
+
+    def show_waves(self,fs):
         print('IN 1')
         print(f'Rising: {self.in1.rising_edges}')
         print(f'Falling: {self.in1.falling_edges}')
@@ -106,7 +104,7 @@ class LPD():
 
         plt.tight_layout()
         plt.show()
-        
+      
 if __name__ == '__main__':
 
 
@@ -122,4 +120,4 @@ if __name__ == '__main__':
     lpd = LPD(square_wave,square_wave2,fs)
     lpd.get_wave_diff()
     lpd.get_phase_diff()
-    # lpd.show_waves()
+    lpd.show_waves(fs)
