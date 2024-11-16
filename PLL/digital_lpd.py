@@ -13,7 +13,7 @@ class Signal():
         if self.wave[0] == 1:
             return np.insert(np.append(np.where(np.diff(self.wave) > 0)[0],self.fs), 0, 0)
         return np.append(np.where(np.diff(self.wave) > 0)[0],self.fs)
-    
+
     def find_falling_edges(self):
         return np.where(np.diff(self.wave) < 0)[0]
 
@@ -104,12 +104,12 @@ class LPD():
 
         plt.tight_layout()
         plt.show()
-      
+
 if __name__ == '__main__':
 
 
     freq = 5
-    fs = 1000
+    fs = 1000  # Sampling frequency
     t = np.linspace(0, 1, fs, endpoint=False)
 
     # Generate the square wave
