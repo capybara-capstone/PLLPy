@@ -47,6 +47,7 @@ def run_tests():
     lpd = LPD(constant_wave, square_wave1, fs)
     lpd.get_wave_diff()
     lpd.get_phase_diff()
+    lpd.show_waves(fs=fs)
     assert np.all(lpd.up.wave == 0) and np.all(lpd.down.wave == 0) and (lpd.phase_diff == None), "Test Case 6 Failed"
     print('Test 5 PASSED')
     

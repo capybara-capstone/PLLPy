@@ -25,8 +25,31 @@ class LPD():
         self.down = Signal(np.linspace(0, 0, fs, endpoint=False),fs)
         self.phase_diff = None
 
-    def get_wave_diff(self):
-        
+    def get_wave_diff(self,):
+        last_in1 = None
+        last_in2 = None
+        for sample in range(self.in1.wave):
+            if self.in1.wave[sample] == 0:
+                self.up.wave[sample] = 0
+                last_in1 = 0
+                last_in2 = self.in2.wave[sample]
+            elif self.in1.wave[sample] == 1:
+                if last_in1 == 0: #rising edge
+                    self.up.wave[sample] = 1
+                    last_in1 = 1
+                    last_in2 = self.in2.wave[sample]
+                elif last_in1 == 1:
+                    if self.in2.wave[sample] == 1:
+                        if last_in2 == 0:
+                            #risign edge wave 2
+                            self.up.wave[sample] = 0
+                        elif last_in2 == 1:
+                            self.up.wave[sample] = 0
+                            
+                        
+                    
+                    
+            
         for re_index in range(1,len(self.in1.rising_edges)):
             if self.in1.rising_edges[re_index-1] < self.in2.rising_edges[re_index-1]:
                 for index, data_point in enumerate(self.in1.wave[self.in1.rising_edges[re_index-1]:self.in1.rising_edges[re_index]]):
