@@ -34,7 +34,7 @@ class LPD():
                     if self.last_in2 == 0:
                             #risign edge wave 2
                             #wave 2 leads
-                            self.switch = 1
+                            self.switch = 0 if self.switch else 1
                     
             elif input_singal_1[sample] == 1:
                 if self.last_in1 == 0: #rising edge
@@ -57,16 +57,16 @@ class LPD():
                                 self.out2.append(1)
                         else:
                             if self.switch:
-                                self.out2.append(self.out[len(self.out)-1])
                                 self.out.append(0)
+                                self.out2.append(self.out2[len(self.out2)-1])
                             else:
                                 self.out.append(self.out[len(self.out)-1])
                                 self.out2.append(0)
                     else:
                         #keep how it was 
                             if self.switch:
-                                self.out2.append(1)
                                 self.out.append(0)
+                                self.out2.append(self.out2[len(self.out2)-1])
                             else:
                                 self.out.append(self.out[len(self.out)-1])
                                 self.out2.append(0)
@@ -131,8 +131,8 @@ class LPD():
 
 if __name__ == '__main__':
 
-    start_count = 50000
-    sample_count = 80000
+    start_count = 0
+    sample_count = 400000
     data = pd.read_csv(os.path.basename(big_test))
     time = data['time'].to_numpy()
     in_a = data['IN_A'].to_numpy()
