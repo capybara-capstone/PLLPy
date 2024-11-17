@@ -51,12 +51,14 @@ class LPD():
                         self.last_in1 = 1
                         self.last_in2 = 0
             '''
-
+        
 
         for sample in range(len(input_signal_1)):
            
-            #up logic
+           #up logic
 
+           risingEdgeDetected = 0 
+            
            if input_signal_1[sample] == 0:
                 self.result1 = 0
                 self.last_in1 = 0
@@ -64,15 +66,18 @@ class LPD():
            elif input_signal_1[sample] == 1:
                if self.last_in1 == 0: #rising edge detected
                     self.result1 = 1
+                    risingEdgeDetected = 1
                 
                self.last_in1 = 1
 
-           if input_signal_2[sample] == 1:
+           if input_signal_2[sample] == 1 and risingEdgeDetected == 0:
                self.result1 = 0
 
            self.out.append(self.result1)
 
            #down logic
+
+           risingEdgeDetected = 0
             
            if input_signal_2[sample] == 0:
                self.result2 = 0
@@ -81,10 +86,11 @@ class LPD():
            elif input_signal_2[sample] == 1:
               if self.last_in2 == 0: #rising edge detected
                 self.result2 = 1
+                risingEdgeDetected = 1
             
               self.last_in2 = 1
 
-           if input_signal_1[sample] == 1:
+           if input_signal_1[sample] == 1 and risingEdgeDetected ==0:
                self.result2 = 0
 
            self.out2.append(self.result2)
