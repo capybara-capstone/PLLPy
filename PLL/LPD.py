@@ -172,12 +172,12 @@ if __name__ == '__main__':
     square_wave_pairs = in_a.reshape(-1, 2)
     square_wave2_pairs = in_b.reshape(-1,2)
 
-    '''
+    
 
     #USAGE EXAMPLE
 
 
-    '''
+    
 
     lpd = LPD(square_wave_pairs[0],square_wave2_pairs[0])
     square_wave_pairs = square_wave_pairs[1:]
@@ -186,12 +186,12 @@ if __name__ == '__main__':
     for index, sample in enumerate(square_wave_pairs):
         lpd.get_wave_diff(sample,square_wave2_pairs[index])
     
-    '''
+    
 
     #END USAGE EXAMPLE
 
 
-    '''
+    
 
     plt.figure(figsize=(14, 6))
 
