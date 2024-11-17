@@ -1,5 +1,5 @@
 typing-extensions
 pytest
 pandas
-
-
+scipy
+matplotlib

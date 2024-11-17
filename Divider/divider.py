@@ -19,6 +19,7 @@ VSS = 0
 # Divider ratio
 N = 0
 
+
 def div(a, b, o, VDD, VSS, number_of_elements, N):
     
     counter_up = 0
@@ -26,6 +27,7 @@ def div(a, b, o, VDD, VSS, number_of_elements, N):
     toggle_count = N/2
     toggle = True
     ton = False
+
     input_ton = 1 #default is no extension
     if toggle_count.is_integer() == False:
         toggle_count = toggle_count - 0.5
@@ -39,6 +41,7 @@ def div(a, b, o, VDD, VSS, number_of_elements, N):
         elif a[i] == VDD and a[i-1] == VSS:
             if toggle == True: #cleared or starting
                 if ton == True: 
+                  
                     #append half ton times more
                     o.extend([VDD] * input_ton)
                     o.append(VSS)
@@ -46,6 +49,7 @@ def div(a, b, o, VDD, VSS, number_of_elements, N):
                 else: 
                     #o.append(VDD)
                     o.extend([VSS] * input_ton)
+
                     o.append(VDD)
                     ton = True
                 toggle = False
@@ -55,7 +59,9 @@ def div(a, b, o, VDD, VSS, number_of_elements, N):
     
         elif a[i] == VSS and a[i-1] == VDD:
             counter_down = counter_down + 1 #transition down
+
             if input_ton == 0: input_ton = i
+
             if ton == True: o.append(VDD)
             else: o.append(VSS) #continue
             if counter_down == toggle_count: toggle = True
@@ -75,7 +81,9 @@ number_of_elements = math.floor(stop_time / time_step)
 
 # discretized input square wave
 for i in range(0, number_of_elements):
+
     if (1+math.sin(i/math.floor(number_of_elements/30)))>1:
+
         a.append(VDD)
     else:
         a.append(VSS)
