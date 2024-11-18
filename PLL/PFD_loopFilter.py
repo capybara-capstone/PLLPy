@@ -38,12 +38,11 @@ def pfd(a, b, o, VDD, VSS, time_step, stop_time, state_vector):
     gain_a = 2.5e-5
     gain_b = -2.5e-5
     c = []
-
+    
     for i in range(0, len(a)):
         c.append(gain_a*float(a[i]) + gain_b*float(b[i]))
-    
 
-    for i in range(1, math.floor(stop_time/time_step)):
+    for i in range(1, len(c)):
         inputArray= [c[i-1],c[i]]
         inputTime= [time_array[i-1], time_array[i]]
         time_out, signal_out, xout = signal.lsim(transferFunction, U=inputArray, T=inputTime, X0=state_vector)

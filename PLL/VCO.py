@@ -16,7 +16,7 @@ k_vco = 1e9
 
 #given in seconds
 time_step = 1e-11
-stop_time = 4e-6
+stop_time = 1e-7
 
 def block_1_a(input_voltage):
     return (input_voltage * 2 * math.pi * k_vco)

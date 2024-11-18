@@ -17,7 +17,7 @@ import divider
 VDD = 1
 VSS = 0
 time_step = 1e-11
-stop_time = 4e-6
+stop_time = 1e-7
 number_of_elements = math.floor(stop_time / time_step)
 
 #input array
@@ -36,6 +36,9 @@ k_vco = 1e9
 #setup initial conditions
 ref_clock_state_holder = 0
 divider_state_holder = [0, False, True, 0, 0]
+loop_filter_state_holder = 0
+filter_previous_sample1 = 0
+filter_previous_sample2 = 0
 feedback = 0
 
 #setup lpd
@@ -51,11 +54,14 @@ for i in range(0, number_of_elements):
     lpd.get_wave_diff(feedback, ref_clock_out[i]) 
 
     #Loop Filter
+    loop_filter_out, loop_filter_state_holder = PFD_loopFilter.pfd([filter_previous_sample1, lpd.out[i]], [filter_previous_sample2, lpd.out2[i]], loop_filter_out, VDD, VSS, time_step, stop_time, loop_filter_state_holder)
+    filter_previous_sample1 = lpd.out[i]
+    filter_previous_sample2 = lpd.out2[i]
 
     #VCO
 
     #divider
-    divider_out, divider_state_holder = divider.div(ref_clock_out[i],divider_out,VDD,VSS,2,100,divider_state_holder)
+    divider_out, divider_state_holder = divider.div(ref_clock_out[i],divider_out,VDD,VSS,2,10,divider_state_holder)
     
     #feedback
     #print(i)
@@ -71,12 +77,14 @@ print(len(ref_clock_out))
 print(len(divider_out))
 print(len(lpd.out))
 print(len(lpd.out2))
+print(len(loop_filter_out))
 
-fig, axs = plt.subplots(4)
+fig, axs = plt.subplots(5)
 axs[0].plot(ref_clock_out, color="red")
 axs[1].plot(divider_out, color="green")
 axs[2].plot(lpd.out, color="blue")
 axs[3].plot(lpd.out2, color="blue")
+axs[4].plot(loop_filter_out, color="purple")
 
 
 plt.show()
