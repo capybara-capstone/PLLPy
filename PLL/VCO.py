@@ -16,7 +16,7 @@ k_vco = 1e9
 
 #given in seconds
 time_step = 1e-11
-stop_time = 3e-11
+stop_time = 4e-6
 
 def block_1_a(input_voltage):
     return (input_voltage * 2 * math.pi * k_vco)
@@ -41,8 +41,8 @@ def block_5(sine_out):
         return VDD
 
 
-def VCO(a, o, frq):
-    total_integral = 0;
+def VCO(a, o, frq, vco_state):
+    total_integral = vco_state
     for i in a:
         new_voltage = block_1_a(i);
         angular_frq = block_1_b(frq)
@@ -51,3 +51,4 @@ def VCO(a, o, frq):
         total_integral = block_3(multiply, total_integral)
         sin_out = block_4(total_integral)
         o.append(block_5(sin_out))
+    return total_integral

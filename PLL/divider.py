@@ -9,20 +9,30 @@ Created on Sat Nov 16 13:17:24 2024
 VDD = 1
 VSS = 0
 
-def div(a, o, VDD, VSS, number_of_elements, N):
+def div(a, o, VDD, VSS, number_of_elements, N, stored_state):
     
-    counter_up = 0
-    counter_down = 0
+    #counter_up = 0
+    #counter_down = 0
+    #toggle_count = N/2
+    #toggle = True
+    #ton = False
+
+
+    counter_up = stored_state[3]
+    counter_down = stored_state[4]
     toggle_count = N/2
-    toggle = True
-    ton = False
+    toggle = stored_state[2]
+    ton = stored_state[1]
+    
+    a = [stored_state[0], a]
+
 
     input_ton = 1 #default is no extension
     if toggle_count.is_integer() == False:
         toggle_count = toggle_count - 0.5
         input_ton = 0 #get number of samples to extend
         
-    for i in range(0, number_of_elements):
+    for i in range(1, number_of_elements):
 
         if i == 0:
             o.append(a[0])
@@ -58,5 +68,5 @@ def div(a, o, VDD, VSS, number_of_elements, N):
         else: 
             if ton == True: o.append(VDD)
             else: o.append(VSS) #continue
-    return o
+    return o, [a[1], ton, toggle, counter_up, counter_down] 
 
