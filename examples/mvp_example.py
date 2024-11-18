@@ -36,9 +36,10 @@ k_vco = 1e9
 #setup initial conditions
 ref_clock_state_holder = 0
 divider_state_holder = [0, False, True, 0, 0]
+feedback = 0
 
 #setup lpd
-lpd = LPD.LPD(0,0)
+lpd = LPD.LPD([0],[0])
 
 #MAIN loop
 for i in range(0, number_of_elements):
@@ -47,7 +48,7 @@ for i in range(0, number_of_elements):
     ref_clock_state_holder = VCO.VCO([0], ref_clock_out, 1e9, ref_clock_state_holder)
 
     #LPD
-    
+    lpd.get_wave_diff(feedback, ref_clock_out[i]) 
 
     #Loop Filter
 
@@ -55,6 +56,10 @@ for i in range(0, number_of_elements):
 
     #divider
     divider_out, divider_state_holder = divider.div(ref_clock_out[i],divider_out,VDD,VSS,2,100,divider_state_holder)
+    
+    #feedback
+    #print(i)
+    feedback = divider_out[i]
 
 
 #plotting
@@ -62,9 +67,16 @@ for i in range(0, number_of_elements):
 ref_clock_out = np.array(ref_clock_out)
 divider_out = np.array(divider_out)
 
-fig, axs = plt.subplots(2)
+print(len(ref_clock_out))
+print(len(divider_out))
+print(len(lpd.out))
+print(len(lpd.out2))
+
+fig, axs = plt.subplots(4)
 axs[0].plot(ref_clock_out, color="red")
 axs[1].plot(divider_out, color="green")
+axs[2].plot(lpd.out, color="blue")
+axs[3].plot(lpd.out2, color="blue")
 
 
 plt.show()

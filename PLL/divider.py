@@ -54,6 +54,11 @@ def div(a, o, VDD, VSS, number_of_elements, N, stored_state):
                 toggle = False
                 counter_up = 0
                 counter_down = 0
+            else:
+                if ton:
+                    o.append(VDD)
+                else:
+                    o.append(VSS)
             counter_up = counter_up + 1 #transition up
     
         elif a[i] == VSS and a[i-1] == VDD:

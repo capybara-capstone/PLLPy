@@ -18,27 +18,28 @@ class LPD():
         self.result2 = 0
 
     def get_wave_diff(self,input_signal_1,input_signal_2):
-        if len(input_signal_1) != len(input_signal_2):
-            raise Exception
+        #you can put this back later I just got rid of it because I had to
+        #if len(input_signal_1) != len(input_signal_2):
+        #    raise Exception
 
-        for sample in range(len(input_signal_1)):
+        #for sample in range(len(input_signal_1)):
            
            #up logic
 
            risingEdgeDetected = 0 
             
-           if input_signal_1[sample] == 0:
+           if input_signal_1 == 0:
                 self.result1 = 0
                 self.last_in1 = 0
 
-           elif input_signal_1[sample] == 1:
+           elif input_signal_1 == 1:
                if self.last_in1 == 0: #rising edge detected
                     self.result1 = 1
                     risingEdgeDetected = 1
                 
                self.last_in1 = 1
 
-           if input_signal_2[sample] == 1 and risingEdgeDetected == 0:
+           if input_signal_2 == 1 and risingEdgeDetected == 0:
                self.result1 = 0
 
            self.out.append(self.result1)
@@ -47,18 +48,18 @@ class LPD():
 
            risingEdgeDetected = 0
             
-           if input_signal_2[sample] == 0:
+           if input_signal_2 == 0:
                self.result2 = 0
                self.last_in2 = 0
 
-           elif input_signal_2[sample] == 1:
+           elif input_signal_2 == 1:
               if self.last_in2 == 0: #rising edge detected
                 self.result2 = 1
                 risingEdgeDetected = 1
             
               self.last_in2 = 1
 
-           if input_signal_1[sample] == 1 and risingEdgeDetected ==0:
+           if input_signal_1 == 1 and risingEdgeDetected ==0:
                self.result2 = 0
 
            self.out2.append(self.result2)
