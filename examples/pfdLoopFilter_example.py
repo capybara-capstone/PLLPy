@@ -40,8 +40,11 @@ o.append(o[len(o)-1])
 original_signal = np.array(a)
 output_pfd = np.array(o)
 fig, axs = plt.subplots(2)
+
+axs[0].title.set_text("Input")
 axs[0].plot(original_signal,color="purple")
-axs[1].step(np.array(range(0, number_of_elements)),output_pfd,color="pink")
+
+axs[1].title.set_text("Output")
+axs[1].step(np.array(range(0, number_of_elements)),output_pfd,color="purple")
 
 plt.show()
-

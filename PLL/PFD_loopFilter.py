@@ -24,7 +24,7 @@ stop_time = 1e-5
 def pfd(a, b, o, VDD, VSS, time_step, stop_time, state_vector):
 
     #cap
-    C_one = 5e-12
+    C_one = 1500e-12
 
     #transfer function definition
     numerator = [1.0,]

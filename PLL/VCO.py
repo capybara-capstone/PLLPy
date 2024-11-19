@@ -11,12 +11,12 @@ import math
 
 VDD = 0
 VSS = 1
-default_frq = 1e9
+default_frq = 1e7
 k_vco = 6.2832e9
 
 #given in seconds
-time_step = 1e-11
-stop_time = 1e-6
+time_step = 1e-9
+stop_time = 10e-6
 
 def block_1_a(input_voltage):
     return (input_voltage * 2 * math.pi * k_vco)

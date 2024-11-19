@@ -16,8 +16,8 @@ import divider
 #setting up some globals
 VDD = 1
 VSS = 0
-time_step = 1e-11
-stop_time = 1e-6
+time_step = 1e-9
+stop_time = 10e-6
 number_of_elements = math.floor(stop_time / time_step)
 
 #input array
@@ -49,7 +49,7 @@ lpd = LPD.LPD([0],[0])
 for i in range(0, number_of_elements):
 
     #reference clock
-    ref_clock_state_holder = VCO.VCO([0], ref_clock_out, 1.2566e8, ref_clock_state_holder)
+    ref_clock_state_holder = VCO.VCO([0], ref_clock_out, 1e7, ref_clock_state_holder)
 
     #LPD
     lpd.get_wave_diff(ref_clock_out[i], feedback) 
@@ -60,10 +60,10 @@ for i in range(0, number_of_elements):
     filter_previous_sample2 = lpd.out2[i]
 
     #VCO
-    vco_state_holder = VCO.VCO([loop_filter_out[i]], vco_out, 1000e6, vco_state_holder)
+    vco_state_holder = VCO.VCO([loop_filter_out[i]], vco_out, 1e7, vco_state_holder)
 
     #divider
-    divider_out, divider_state_holder = divider.div(vco_out[i],divider_out,VDD,VSS,2,20,divider_state_holder)
+    divider_out, divider_state_holder = divider.div(vco_out[i],divider_out,VDD,VSS,2,10,divider_state_holder)
     
     #feedback
     feedback = divider_out[i]
@@ -84,12 +84,24 @@ print(len(loop_filter_out))
 print(len(vco_out))
 
 fig, axs = plt.subplots(6)
-axs[0].plot(ref_clock_out, color="red")
+
+axs[0].title.set_text("Reference Clock")
+axs[0].plot(ref_clock_out, color="green")
+
+axs[1].title.set_text("Divider")
 axs[1].plot(divider_out, color="green")
-axs[2].plot(lpd.out, color="blue")
-axs[3].plot(lpd.out2, color="blue")
-axs[4].plot(loop_filter_out, color="purple")
-axs[5].plot(vco_out, color="pink")
+
+axs[2].title.set_text("Phase Frequency Detector - Up")
+axs[2].plot(lpd.out, color="green")
+
+axs[3].title.set_text("Phase Frequency Detector - Down")
+axs[3].plot(lpd.out2, color="green")
+
+axs[4].title.set_text("Loop Filter")
+axs[4].plot(loop_filter_out, color="green")
+
+axs[5].title.set_text("Voltage Controlled Oscillator")
+axs[5].plot(vco_out, color="green")
 
 
 plt.show()
