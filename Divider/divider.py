@@ -17,21 +17,22 @@ VDD = 1
 VSS = 0
 
 # Divider ratio
-N = 0
+N = 7
 
 
 def div(a, b, o, VDD, VSS, number_of_elements, N):
     
-    counter_up = 0
-    counter_down = 0
-    toggle_count = N/2
-    toggle = True
-    ton = False
-
-    input_ton = 1 #default is no extension
-    if toggle_count.is_integer() == False:
-        toggle_count = toggle_count - 0.5
-        input_ton = 0 #get number of samples to extend
+    transition_up_count = 0
+    transition_up_count_half = N-(1*(N//2)-1)
+    transition_up_count_max = N+1 # same for even and odd
+    transition_down_count = 0 # down does not matter for even
+    transition_down_count_half = 0 
+    ton = True
+    isOdd = False
+    
+    if (N%2 != 0):
+        isOdd = True
+        transition_down_count_half = N-(1*(N//2))
         
     for i in range(0, number_of_elements):
 
@@ -39,36 +40,55 @@ def div(a, b, o, VDD, VSS, number_of_elements, N):
             o.append(a[0])
         
         elif a[i] == VDD and a[i-1] == VSS:
-            if toggle == True: #cleared or starting
-                if ton == True: 
-                  
-                    #append half ton times more
-                    o.extend([VDD] * input_ton)
-                    o.append(VSS)
-                    ton = False
-                else: 
-                    #o.append(VDD)
-                    o.extend([VSS] * input_ton)
-
-                    o.append(VDD)
+            transition_up_count = transition_up_count + 1
+            if (isOdd):
+                if transition_up_count == transition_up_count_max:
                     ton = True
-                toggle = False
-                counter_up = 0
-                counter_down = 0
-            counter_up = counter_up + 1 #transition up
+                    o.append(VDD) 
+                    transition_up_count = 1 # first of new cycle
+                    transition_down_count = 0
+                else:
+                    if ton == True: 
+                        o.append(VDD)
+                    else: 
+                        o.append(VSS)        
+            elif (not isOdd):
+                if transition_up_count == transition_up_count_half:
+                    ton = False
+                    o.append(VSS) 
+                elif transition_up_count == transition_up_count_max:
+                    ton = True
+                    o.append(VDD) 
+                    transition_up_count = 1 # first of new cycle
+                    transition_down_count = 0
+                else:
+                    if ton == True: 
+                        o.append(VDD)
+                    else: 
+                        o.append(VSS) 
     
         elif a[i] == VSS and a[i-1] == VDD:
-            counter_down = counter_down + 1 #transition down
-
-            if input_ton == 0: input_ton = i
-
-            if ton == True: o.append(VDD)
-            else: o.append(VSS) #continue
-            if counter_down == toggle_count: toggle = True
+            transition_down_count = transition_down_count + 1
+            if (isOdd):
+                if transition_down_count == transition_down_count_half:
+                    ton = False
+                    o.append(VSS)
+                else:
+                    if ton == True: 
+                        o.append(VDD)
+                    else: 
+                        o.append(VSS) 
+            elif (not isOdd):
+                if ton == True: 
+                    o.append(VDD)
+                else: 
+                    o.append(VSS) 
             
-        else: 
-            if ton == True: o.append(VDD)
-            else: o.append(VSS) #continue
+        else: #continue
+            if ton == True: 
+                o.append(VDD)
+            else: 
+                o.append(VSS) 
     return o
 
 # TEST
@@ -82,7 +102,7 @@ number_of_elements = math.floor(stop_time / time_step)
 # discretized input square wave
 for i in range(0, number_of_elements):
 
-    if (1+math.sin(i/math.floor(number_of_elements/30)))>1:
+    if (1+math.sin(i/math.floor(number_of_elements/50)))>1:
 
         a.append(VDD)
     else:
@@ -92,7 +112,8 @@ o = div(a, b, o, VDD, VSS, number_of_elements, N)
 
 original_signal = np.array(a)
 divided_signal = np.array(o)
-
+print(len(o))
+print(len(a))
 fig, axs = plt.subplots(2)
 axs[0].plot(original_signal,color="pink")
 axs[1].plot(divided_signal,color="blue")
