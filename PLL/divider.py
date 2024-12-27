@@ -9,9 +9,6 @@ Created on Sat Nov 16 13:17:24 2024
 VDD = 1
 VSS = 0
 
-# Divider ratio
-N = 6
-
 
 def div(a, o, VDD, VSS, number_of_elements, N):
     
