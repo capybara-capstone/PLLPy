@@ -51,37 +51,4 @@ def pfd(a, b, o, VDD, VSS, time_step, stop_time, state_vector):
         state_vector=xout[1]
     return o, state_vector
 
-'''
 
-# TEST
-
-a = []
-b = []
-o = []
-number_of_elements = math.floor(stop_time / time_step)
-
-#set up test signal (square wave) - ideally we'll see the square wave be rounded by the filter
-for i in range(0, number_of_elements):
-    if (1+math.sin(i/math.floor(number_of_elements/20)))>1:
-        a.append(VDD)
-    else:
-        a.append(VSS)
-for i in a:
-    b.append(-a[1])
-
-state_vector = 0
-
-o, state_vector = pfd(a, b, o, VDD, VSS, time_step, stop_time, state_vector)
-
-o.append(o[len(o)-1])
-
-
-original_signal = np.array(a)
-output_pfd = np.array(o)
-fig, axs = plt.subplots(2)
-axs[0].plot(original_signal,color="purple")
-axs[1].step(np.array(range(0, number_of_elements)),output_pfd,color="pink")
-
-plt.show()
-
-'''

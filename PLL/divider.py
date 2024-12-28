@@ -9,7 +9,6 @@ Created on Sat Nov 16 13:17:24 2024
 VDD = 1
 VSS = 0
 
-
 def div(a, o, VDD, VSS, number_of_elements, N):
     
     transition_up_count = 0
