@@ -35,7 +35,8 @@ k_vco = 6.2832e9
 
 #setup initial conditions
 ref_clock_state_holder = 0
-divider_state_holder = [0, False, True, 0, 0]
+ # previous state, transition_up_count, transition_down_count, transition_down_count_half, ton
+divider_state_holder = [0, 0, 0, 0, True]
 loop_filter_state_holder = 0
 filter_previous_sample1 = 0
 filter_previous_sample2 = 0
@@ -63,7 +64,7 @@ for i in range(0, number_of_elements):
     vco_state_holder = VCO.VCO([loop_filter_out[i]], vco_out, 1e7, vco_state_holder)
 
     #divider
-    divider_out, divider_state_holder = divider.div(vco_out[i],divider_out,VDD,VSS,2,10,divider_state_holder)
+    divider_out, divider_state_holder = divider.div(vco_out[i],divider_out,VDD,VSS,2,1,divider_state_holder)
     
     #feedback
     feedback = divider_out[i]
