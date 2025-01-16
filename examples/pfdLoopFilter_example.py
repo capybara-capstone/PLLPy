@@ -28,7 +28,10 @@ for i in range(0, number_of_elements):
     else:
         a.append(VSS)
 for i in a:
-    b.append(-a[1])
+    if i == VDD:
+        b.append(VSS)
+    elif i == VSS:
+        b.append(VDD)
 
 state_vector = 0
 
@@ -38,13 +41,18 @@ o.append(o[len(o)-1])
 
 
 original_signal = np.array(a)
+down_signal = np.array(b)
 output_pfd = np.array(o)
-fig, axs = plt.subplots(2)
+fig, axs = plt.subplots(3)
 
-axs[0].title.set_text("Input")
+axs[0].title.set_text("UP")
 axs[0].plot(original_signal,color="purple")
 
-axs[1].title.set_text("Output")
-axs[1].step(np.array(range(0, number_of_elements)),output_pfd,color="purple")
+
+axs[1].title.set_text("DOWN")
+axs[1].plot(down_signal,color="purple")
+
+axs[2].title.set_text("Output")
+axs[2].step(np.array(range(0, number_of_elements)),output_pfd,color="purple")
 
 plt.show()

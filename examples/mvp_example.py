@@ -47,10 +47,13 @@ vco_state_holder = 0
 lpd = LPD.LPD([0],[0])
 
 #MAIN loop
+#use textbook value for parameters (there is a calculation you can use for ideal) - if the parameters are weird your values will be weird.
 for i in range(0, number_of_elements):
 
     #reference clock
+
     ref_clock_state_holder = VCO.VCO([0], ref_clock_out, 1e7, ref_clock_state_holder, k_vco_ref)
+
 
     #LPD
     lpd.get_wave_diff(ref_clock_out[i], feedback) 
@@ -71,7 +74,6 @@ for i in range(0, number_of_elements):
 
 
 #plotting
-
 ref_clock_out = np.array(ref_clock_out)
 divider_out = np.array(divider_out)
 loop_filter_out = np.array(loop_filter_out)
