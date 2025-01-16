@@ -5,7 +5,7 @@ import os, sys
 sys.path.insert(0, os.path.abspath(os.path.join('..', 'PLL')))
 
 import PFD_loopFilter 
-
+import VCO
 # TEST
 
 #power and ground
@@ -23,7 +23,7 @@ number_of_elements = math.floor(stop_time / time_step)
 
 #set up test signal (square wave) - ideally we'll see the square wave be rounded by the filter
 for i in range(0, number_of_elements):
-    if (1+math.sin(i/math.floor(number_of_elements/20)))>1:
+    if (1+math.sin(i/math.floor(number_of_elements/31)))>1:
         a.append(VDD)
     else:
         a.append(VSS)

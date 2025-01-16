@@ -11,14 +11,14 @@ import math
 
 VDD = 0
 VSS = 1
-default_frq = 1e7
-k_vco = 6.2832e9
+#default_frq = 1e7
+#k_vco = 6.2832e9
 
 #given in seconds
 time_step = 1e-9
 stop_time = 10e-6
 
-def block_1_a(input_voltage):
+def block_1_a(input_voltage, k_vco):
     return (input_voltage * 2 * math.pi * k_vco)
 
 def block_1_b(default_frequency):
@@ -41,10 +41,10 @@ def block_5(sine_out):
         return VDD
 
 
-def VCO(a, o, frq, vco_state):
+def VCO(a, o, frq, vco_state, k_vco):
     total_integral = vco_state
     for i in a:
-        new_voltage = block_1_a(i);
+        new_voltage = block_1_a(i, k_vco);
         angular_frq = block_1_b(frq)
 
         multiply = block_2(new_voltage, angular_frq)
