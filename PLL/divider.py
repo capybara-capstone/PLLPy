@@ -32,16 +32,9 @@ def div(input, o, VDD, VSS, N, stored_state):
     
     transition_count_max = 2*N
     transition_count_half = N
-        
-    if (startFlag == True): #starting
-        o.append(input) #follow input
-        startFlag = False #lower flag
-        if (input == VDD):
-            ton = True
-        else:
-            ton = False
-        
-    elif ((a[1] == VDD and a[0] == VSS) or (a[1] == VSS and a[0] == VDD)): #transition up or down
+
+
+    if ((a[1] == VDD and a[0] == VSS) or (a[1] == VSS and a[0] == VDD)): #transition up or down
         if (transition_count == transition_count_max-1):
             transition_count = 0
             if (ton):

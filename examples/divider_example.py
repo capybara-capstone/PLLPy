@@ -13,10 +13,10 @@ stop_time = 1e-5
 VDD = 1
 VSS = 0
 #division value
-N = 5
+N = 3
 
 a = []
-b = [0, 0, True, True]
+b = [0, 0, False, True]
 o = []
 
 number_of_elements = math.floor(stop_time / time_step)
@@ -24,9 +24,9 @@ number_of_elements = math.floor(stop_time / time_step)
 # discretized input square wave
 for i in range(0, number_of_elements):
     if (1+math.sin(i/math.floor(number_of_elements/70)))>1:
-        a.append(VDD)
-    else:
         a.append(VSS)
+    else:
+        a.append(VDD)
     o, b = divider.div(a[i], o, VDD, VSS, N, b)
 
 original_signal = np.array(a)
