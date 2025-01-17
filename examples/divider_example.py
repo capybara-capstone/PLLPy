@@ -13,10 +13,10 @@ stop_time = 1e-5
 VDD = 1
 VSS = 0
 #division value
-N = 4
+N = 5
 
 a = []
-b = []
+b = [0, 0, True, True]
 o = []
 
 number_of_elements = math.floor(stop_time / time_step)
@@ -27,8 +27,7 @@ for i in range(0, number_of_elements):
         a.append(VDD)
     else:
         a.append(VSS)
-    
-o = divider.div(a, o, VDD, VSS, number_of_elements, N)
+    o, b = divider.div(a[i], o, VDD, VSS, N, b)
 
 original_signal = np.array(a)
 divided_signal = np.array(o)

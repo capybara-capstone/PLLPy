@@ -9,8 +9,10 @@
 
 import math
 
-VDD = 0
-VSS = 1
+VDD = 1
+VSS = 0
+
+
 #default_frq = 1e7
 #k_vco = 6.2832e9
 

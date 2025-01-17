@@ -18,8 +18,8 @@ VDD = 1
 VSS = 0
 time_step = 1e-9
 stop_time = 10e-6
-number_of_elements = math.floor(stop_time / time_step)
-
+#number_of_elements = math.floor(stop_time / time_step)
+number_of_elements = 100*8
 #input array
 a = []
 
@@ -30,13 +30,16 @@ loop_filter_out = []
 vco_out = []
 divider_out = []
 
+#for debug
+gain = []
+
 #globals needed for VCO
 k_vco = 6.2832e9
 k_vco_ref = 1.2566e8
 
 #setup initial conditions
 ref_clock_state_holder = 0
-divider_state_holder = [0, 0, 0, 0, True]
+divider_state_holder = [0, 0, True, True]
 loop_filter_state_holder = 0
 filter_previous_sample1 = 0
 filter_previous_sample2 = 0
@@ -59,7 +62,7 @@ for i in range(0, number_of_elements):
     lpd.get_wave_diff(ref_clock_out[i], feedback) 
 
     #Loop Filter
-    loop_filter_out, loop_filter_state_holder = PFD_loopFilter.pfd([filter_previous_sample1, lpd.out[i]], [filter_previous_sample2, lpd.out2[i]], loop_filter_out, VDD, VSS, time_step, stop_time, loop_filter_state_holder)
+    loop_filter_out, loop_filter_state_holder, gain = PFD_loopFilter.pfd([filter_previous_sample1, lpd.out[i]], [filter_previous_sample2, lpd.out2[i]], loop_filter_out, VDD, VSS, time_step, stop_time, loop_filter_state_holder)
     filter_previous_sample1 = lpd.out[i]
     filter_previous_sample2 = lpd.out2[i]
 
@@ -67,7 +70,7 @@ for i in range(0, number_of_elements):
     vco_state_holder = VCO.VCO([loop_filter_out[i]], vco_out, 1e6, vco_state_holder, k_vco)
 
     #divider
-    divider_out, divider_state_holder = divider.div(vco_out[i], divider_out, VDD, VSS, 2, 2, divider_state_holder)
+    divider_out, divider_state_holder = divider.div(vco_out[i], divider_out, VDD, VSS, 20, divider_state_holder)
     
     #feedback
     feedback = divider_out[i]
@@ -86,18 +89,25 @@ print(len(lpd.out2))
 print(len(loop_filter_out))
 print(len(vco_out))
 
-fig, axs = plt.subplots(3)
+fig, axs = plt.subplots(6)
 
+axs[0].title.set_text("Reference Clock")
+axs[0].plot(ref_clock_out, color="green")
 
-axs[0].title.set_text("Phase Frequency Detector - Up")
-axs[0].plot(lpd.out, color="green")
+axs[1].title.set_text("Divider")
+axs[1].plot(divider_out, color="green")
 
-axs[1].title.set_text("Phase Frequency Detector - Down")
-axs[1].plot(lpd.out2, color="green")
+axs[2].title.set_text("Phase Frequency Detector - Up")
+axs[2].plot(lpd.out, color="green")
 
-axs[2].title.set_text("Loop Filter")
-axs[2].plot(loop_filter_out, color="green")
+axs[3].title.set_text("Phase Frequency Detector - Down")
+axs[3].plot(lpd.out2, color="green")
 
+axs[4].title.set_text("Loop Filter")
+axs[4].plot(loop_filter_out, color="green")
+
+axs[5].title.set_text("Voltage Controlled Oscillator")
+axs[5].plot(vco_out, color="green")
 
 
 
