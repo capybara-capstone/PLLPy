@@ -1,0 +1,32 @@
+{
+    "default" : {
+        "VDD" : 1,
+        "VSS" : 0,
+        "time_step" : 1e-6,
+        "stop_time" : 10e-6,
+
+        "ref_clock" : {
+            "fo" : 1e7,
+            "k_vco": 1.2566e8
+        },
+
+        "lpd" : {
+        },
+
+        "pfd_loop_filter" : {
+            "capacitors" : [1],
+            "resistors" : [12],
+            "gains" : [2.5e-5, -2.5e-5]
+        },
+
+        "VCO" : {
+            "fo" : 1e7,
+            "k_vco" : 6.2832e9
+        },
+
+        "divider" : {
+            "divided_value" : 10
+        }
+
+    }
+}

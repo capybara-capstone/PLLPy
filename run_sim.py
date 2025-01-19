@@ -1,5 +1,6 @@
 """Sim """
 from utils.sim import Sim
+from utils.parse_configs import parse_args
 
 
 

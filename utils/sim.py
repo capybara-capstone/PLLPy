@@ -1,4 +1,5 @@
 """Sim class"""
+from utils.parse_configs import *
 import logging
 import logging.config
 import configparser
@@ -37,9 +38,14 @@ class Sim():
         config.set('handler_fileHandler', 'args', f"('{sim_path}',)")
         with open(logger_config_path, 'w', encoding='utf-8') as configfile:
             config.write(configfile)
-        self.settings = Settings()
         logging.config.fileConfig(os.path.join(logger_config_path))
         self.log = logging.getLogger(self.name)
+
+        # Settings setup
+        self.settings = Settings()
+        parse_args(self.settings)
+        
+
 
     def add_components(self, component):
         """Adds component instance to PLL components dict
