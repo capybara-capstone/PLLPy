@@ -9,13 +9,13 @@ from components.buffer import Buffer
 class Divider(Settings):
     """Models Feedback divider"""
 
-    def __init__(self, env, n: int = 3):
+    def __init__(self, env):
         super().__init__()
         self.env = env
         self.name = 'Divider'
-        self.input = Buffer(env=self.env, name=f'N={n} Divider Input')
-        self.output = Buffer(env=self.env, name=f'N={n} Divider Output')
-        self.n = n
+        self.n = self.dividor['n']
+        self.input = Buffer(env=self.env, name=f'N={self.n} Divider Input')
+        self.output = Buffer(env=self.env, name=f'N={self.n} Divider Output')
         self.transition_count = 0
         self.ton = False
         self.last_sample = 0

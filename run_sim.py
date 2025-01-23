@@ -8,8 +8,8 @@ from components.pfd import Pfd
 
 env = simpy.Environment()
 sett = Settings()
-pll = Pll(settings=sett)
-pll.start()
+# pll = Pll(settings=sett)
+# pll.start()
 
 # **UNIT TESTS**
 
@@ -31,8 +31,8 @@ pll.start()
 # env.run(until=1e-5)
 # vco.show(plot=True)
 
-# # Divider unit test
-# div = Divider(env)
-# div.unit_test()
-# env.run(until=1e-5)
-# div.show(plot=True)
+# Divider unit test
+div = Divider(env)
+div.unit_test()
+env.run(until=1e-5)
+div.show(plot=True)

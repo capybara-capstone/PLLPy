@@ -17,7 +17,7 @@ class Settings():
                     'fo': 1e7}
         self.vco = {'k_vco': 6.2832e9,
                     'fo': 1e6}
-        self.dividor = {'n': 3}
+        self.dividor = {'n': 5}
         self.pfd = {'gains': np.array([2.5e-5, -2.5e-5]),
                     'resistors': [],
                     'capacitors': [1.6e-11]
