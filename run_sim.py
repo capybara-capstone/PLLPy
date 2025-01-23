@@ -1,19 +1,18 @@
-import simpy
-from components.pll import Pll
-from components.settings import Settings
-from components.divider import Divider
-from components.lpd import Lpd
-from components.vco import Vco
-from components.pfd import Pfd
+"""Sim """
+from utils.sim import Sim
 
-env = simpy.Environment()
-sett = Settings()
-pll = Pll(settings=sett)
-pll.start()
+
+
+sim = Sim()
+sim.add_pll()
+sim.start()
+
+# pll = Pll(settings=sett)
+# pll.start()
 
 # **UNIT TESTS**
 
-# # PFD unit test
+# PFD unit test
 # pfd = Pfd(env)
 # pfd.unit_test()
 # env.run(until=1e-5)

@@ -5,6 +5,8 @@ from bokeh.layouts import gridplot
 from components.buffer import Buffer
 from components.settings import Settings
 
+# pylint: disable=W1203
+
 
 class Lpd(Settings):
     """Linear Phase Detector"""
@@ -13,6 +15,7 @@ class Lpd(Settings):
         super().__init__()
         self.env = env
         self.name = 'LPD'
+        self.log = None
         self.input_a = Buffer(env, 'LPD Input A')
         self.input_b = Buffer(env, 'LPD Input B')
         self.output_up = Buffer(env, 'LPD Output UP')
@@ -24,12 +27,23 @@ class Lpd(Settings):
         self.output_up.buffer.put(0)
         self.output_down.buffer.put(0)
 
+        self.setup()
+
+    def setup(self):
+        """Set up dividor"""
+        self.log = self.get_logger(self.name)
+        self.log.info(
+            'Linear Phase Detector created with name %s', self.name)
+
     def start(self):
         """Starts lpd"""
-        print(f"Starting {self.name}")
+        self.log.info('Starting %s', self.name)
         while True:
             input_a = yield self.input_a.buffer.get()
             input_b = yield self.input_b.buffer.get()
+
+            self.log.debug(
+                f'@{self.env.now}| {self.name} got sample A {input_a} B {input_b}')
 
             rising_edge_detected = 0
 
@@ -61,13 +75,15 @@ class Lpd(Settings):
             if input_a == 1 and rising_edge_detected == 0:
                 self.results[1] = 0
 
+            self.log.debug(
+                f'@{self.env.now}| {self.name} added {self.results[0]} and {self.results[1]}')
             self.output_down.put(self.results[1])
 
             yield self.env.timeout(self.time_step)
 
     def unit_test(self):
         """Unit test for modules"""
-        print(f"@ {self.env.now}| Testing Phase Detector")
+        print(f"@ {self.env.now}| Testing Phase Detector with unit test")
         number_of_elements = math.floor(self.sim_time / self.time_step)
         for index, i in enumerate(range(0, number_of_elements)):
             if (1+math.sin(i/math.floor(number_of_elements/31))) > 1:

@@ -1,11 +1,13 @@
 """Phase Loop Filter Class"""
+import math
 from scipy import signal
 import numpy as np
-import math
 from bokeh.plotting import show
 from bokeh.layouts import gridplot
 from components.settings import Settings
 from components.buffer import Buffer
+
+# pylint: disable=W0612 disable=W1203
 
 
 class Pfd(Settings):
@@ -22,22 +24,33 @@ class Pfd(Settings):
         self.resistors = self.pfd['resistors']
         self.gains = self.pfd['gains']
         self.h = signal.TransferFunction([1.0,],
-                                         # **TODO Hardcoded C case**
                                          [self.capacitors[0], 0,]
                                          )
         self.gain_histogram = Buffer(env, 'Loop Filter Gain')
         self.last = [0, 0]
         self.state = 0
+        self.log = None
+
+        self.setup()
+
+    def setup(self):
+        """Set up dividor"""
+        self.log = self.get_logger(self.name)
+        self.log.info(
+            'Loop Filter created with name %s', self.name)
 
     def start(self):
         """Start Loop filter"""
         # init_a = yield self.input_a.buffer.get()
         # init_b = yield self.input_b.buffer.get()
         # self.last = [init_a, init_b]
-        print(f"Starting {self.name}")
+        self.log.info('Starting %s', self.name)
         while True:
             current_sample_a = yield self.input_a.buffer.get()
             current_sample_b = yield self.input_b.buffer.get()
+
+            self.log.debug(
+                f'@{self.env.now}| {self.name} got sample A {current_sample_a} B {current_sample_b}')
 
             scaled_input = np.dot(np.array([self.last, [current_sample_a, current_sample_b]]),
                                   self.gains)
@@ -51,6 +64,9 @@ class Pfd(Settings):
             self.last = [current_sample_a, current_sample_b]
             self.output.put(signal_out[1])
             self.state = xout[1]
+            self.log.debug(
+                f'@{self.env.now}| {self.name}  added {signal_out[1]}')
+
             yield self.env.timeout(self.time_step)
 
     def unit_test(self):

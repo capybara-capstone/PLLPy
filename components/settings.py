@@ -1,8 +1,13 @@
+"""Settings class"""
+import logging
+import os
 from simpy import Environment
 import numpy as np
 
 
 class Settings():
+    """Setting class"""
+
     def __init__(self,
                  vdd: int = 1,
                  vss: int = 0,
@@ -11,6 +16,7 @@ class Settings():
         self.env = Environment()
         self.vdd = vdd
         self.vss = vss
+        self.paths = self.init_paths()
         self.time_step = time_step
         self.sim_time = sim_time
         self.clk = {'k_vco': 1.2566e8,
@@ -28,3 +34,45 @@ class Settings():
                            'dividor': self.dividor,
                            'pfd': self.pfd,
                            'lpd': self.lpd}
+
+    def init_paths(self):
+        """Populates paths dict
+        Includes the path for outputs
+        """
+        base = os.getcwd()
+        return {'base': base,
+                'outputs': os.path.join(base, 'outputs'),
+                }
+
+    def get_running_dir(self):
+        """Gets the running directory
+
+        :returns: Returns the name of the running dir
+        :rtype: None | str
+        """
+        output_dir = os.path.join(os.getcwd(), 'outputs')
+        for output in os.listdir(output_dir):
+            if output.startswith('RUNNING'):
+                return os.path.join(output_dir,output)
+
+        return None
+
+    def get_logger(self, name):
+        """Sets up a logger based on root
+
+        It adds another file handler per module instance.
+
+        :param name: Name of the module
+        :type name: str
+        """
+        log = logging.getLogger(name)
+        run_path = None
+        for run in os.listdir(self.paths['outputs']):
+            if run.startswith('RUNNING'):
+                run_path = os.path.join(
+                    self.paths['outputs'], run, f'{name}.log')
+
+        fh = logging.FileHandler(run_path)
+        fh.setLevel(logging.DEBUG)
+        log.addHandler(fh)
+        return log

@@ -1,31 +1,41 @@
 """pll class"""
+import os
+from bokeh.plotting import show, output_file, save
+from bokeh.layouts import gridplot
 from components.divider import Divider
 from components.lpd import Lpd
 from components.vco import Vco
 from components.pfd import Pfd
 from components.settings import Settings
-from bokeh.plotting import show
-from bokeh.layouts import gridplot
+
+# pylint: disable=W0718
 
 
 class Pll():
     """PLL main class"""
 
-    def __init__(self, settings: Settings):
+    def __init__(self, settings: Settings, name="PLL",  auto_setup: bool = True):
         self.settings = settings
         self.env = settings.env
+        self.name = name
         self.components_dict = {}
+        self.log = None
+        if auto_setup:
+            self.setup()
+
+    def setup(self):
+        """Set up dividor"""
+        self.log = self.settings.get_logger(self.name)
 
     def start(self):
         """Start PLL simulation"""
-        clk = Vco(self.env, 'CLK', clk=True)
-        lpd = Lpd(self.env)
-        pfd = Pfd(self.env)
-        vco = Vco(self.env)
-        div = Divider(self.env)
+        clk = self.add_components(Vco(self.env, 'CLK', clk=True))
+        lpd = self.add_components(Lpd(self.env))
+        pfd = self.add_components(Pfd(self.env))
+        vco = self.add_components(Vco(self.env))
+        div = self.add_components(Divider(self.env))
 
-        self.add_components([clk, lpd, pfd, vco, div])
-
+        # Interconnect modules
         lpd.input_a = clk.output
 
         pfd.input_a = lpd.output_up
@@ -36,25 +46,36 @@ class Pll():
 
         lpd.input_b = div.output
 
+        self.log.info("Starting simulation")
         self.env.process(clk.start())
         self.env.process(lpd.start())
         self.env.process(pfd.start())
         self.env.process(vco.start())
         self.env.process(div.start())
         self.env.run(until=self.settings.sim_time)
-        self.show()
+        self.log.info("Simulation Finished")
 
-    def add_components(self, components):
+        sim_path = self.settings.get_running_dir()
+        self.show(save_path=sim_path)
+
+    def add_components(self, component):
         """Adds component instance to PLL components dict
 
         :param components: Components instances to be added
                            Index is the components name.
         :type components: object | list[Object]
         """
-        for component in components:
+        try:
             self.components_dict[component.name] = component
+            self.log.info(f'Component {component.name} added to {self.name}')
+        except Exception as e:
+            self.log.error(
+                f'Component {component.name} NOT added to {self.name}')
+            self.log.error(f'ERROR: {e}')
 
-    def show(self):
+        return component
+
+    def show(self, save_path: str = None):
         """Plots the outputs of the PLL"""
         clk = self.components_dict['CLK']
         div = self.components_dict['Divider']
@@ -66,7 +87,11 @@ class Pll():
         pfd_output = pfd.output.get_buffer_waves()
         vco_output = vco.output.get_buffer_waves()
 
-        show(gridplot([[div_output,
+        grid = gridplot([[div_output,
                         pfd_output,
                         vco_output,
-                        clk_output]]))
+                        clk_output]])
+        if save_path is not None:
+            show(grid)
+            output_file(os.path.join(save_path, 'sim_output.html'))
+            save(grid)

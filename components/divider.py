@@ -5,6 +5,8 @@ from bokeh.layouts import gridplot
 from components.settings import Settings
 from components.buffer import Buffer
 
+# pylint: disable=W1203
+
 
 class Divider(Settings):
     """Models Feedback divider"""
@@ -13,6 +15,7 @@ class Divider(Settings):
         super().__init__()
         self.env = env
         self.name = 'Divider'
+        self.log = None
         self.input = Buffer(env=self.env, name=f'N={n} Divider Input')
         self.output = Buffer(env=self.env, name=f'N={n} Divider Output')
         self.n = n
@@ -20,30 +23,45 @@ class Divider(Settings):
         self.ton = False
         self.last_sample = 0
 
+        self.setup()
+
+    def setup(self):
+        """Set up dividor"""
+        self.log = self.get_logger(self.name)
+        self.log.info('Divider created with name %s and N %d',
+                      self.name, self.n)
+
     def start(self):
         """Continous loop handling transition logic"""
-        print(f"Starting {self.name}")
+        self.log.info('Starting %s',self.name)
         # self.last_sample = yield self.input.buffer.get()
         while True:
             current_sample = yield self.input.buffer.get()
-            if (self.last_sample == self.vdd and current_sample == self.vss) or (self.last_sample == self.vss and current_sample == self.vdd):
+            added = None
+            self.log.debug(f'@{self.env.now}| {self.name} got sample {current_sample}')
+            if (self.last_sample == self.vdd and current_sample == self.vss
+                ) or (self.last_sample == self.vss and current_sample == self.vdd):
                 if self.transition_count in (self.n * 2-1, self.n-1):
                     self.transition_count = 0 if self.transition_count == (
                         self.n * 2) - 1 else self.transition_count + 1
                     self.ton = not self.ton
                     self.output.put(self.vss if self.ton else self.vdd)
+                    added = self.vss if self.ton else self.vdd
                 else:
                     self.transition_count += 1
                     self.output.put(self.vdd if self.ton else self.vss)
+                    added = self.vss if self.ton else self.vdd
             else:
                 self.output.put(self.vdd if self.ton else self.vss)
-
+                added = self.vss if self.ton else self.vdd
+            self.log.debug(
+                f'@{self.env.now}| {self.name} added sample {added}')
             self.last_sample = current_sample
             yield self.env.timeout(self.time_step)
 
     def unit_test(self):
         """Unit test for modules"""
-        print(f"@ {self.env.now}| Testing Divider")
+        self.log.info('Running Unit Test')
         number_of_elements = math.floor(self.sim_time / self.time_step)
         for index, i in enumerate(range(0, number_of_elements)):
             if (1+math.sin(i/math.floor(number_of_elements/70))) > 1:
@@ -71,5 +89,4 @@ class Divider(Settings):
         if plot:
             show(gridplot([[input_plot], [output_plot]]))
             return None
-        else:
-            return [[input_plot, output_plot]]
+        return [[input_plot, output_plot]]

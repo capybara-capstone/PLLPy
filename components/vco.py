@@ -5,6 +5,8 @@ from bokeh.layouts import gridplot
 from components.settings import Settings
 from components.buffer import Buffer
 
+# pylint: disable=W1203
+
 
 class Vco(Settings):
     """Models a voltage controlled oscilator.
@@ -23,21 +25,36 @@ class Vco(Settings):
         self.gain = self.clk['k_vco'] if self.clk else self.vco['k_vco']
         self.frequency = self.clk['fo'] if self.clk else self.vco['fo']
         self.last = 0
-
+        self.log = None
+        self.setup()
         if self.clk_flag:
             self.input.buffer.put(0)
 
+    def setup(self):
+        """Set up dividor"""
+        self.log = self.get_logger(self.name)
+        self.log.info(
+            'Voltage Controlled Oscillator created with name %s', self.name)
+
     def start(self):
         """Start VCO"""
-        print(f"Starting {self.name}")
+        self.log.info('Starting %s', self.name)
         while True:
             current_sample = yield self.input.buffer.get()
+
+            self.log.debug(
+                f'@{self.env.now}| {self.name} got sample {current_sample}')
+
             new_voltage = current_sample * 2 * pi * self.gain
             angular_frequency = self.frequency * 2 * pi
             multiply = new_voltage+angular_frequency
             total_integral = self.last + (multiply * self.time_step)
             sin_out = cos(total_integral)
-            self.output.put(self.vss if sin_out < 0 else self.vdd)
+            out = self.vss if sin_out < 0 else self.vdd
+            self.output.put(out)
+            self.log.debug(
+                f'@{self.env.now}| {self.name} added sample {out}')
+
             if self.clk_flag:
                 self.input.put(0)
             self.last = total_integral

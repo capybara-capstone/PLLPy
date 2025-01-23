@@ -21,7 +21,7 @@ class Buffer():
         """
         self.buffer.put(value)
         self.monitor.append((self.env.now, value))
-        print(f"@ {self.env.now}| {value} ADDED to {self.name}")
+        # print(f"@ {self.env.now}| {value} ADDED to {self.name}")
 
     def get_buffer_waves(self):
         """Plots the buffers over time"""
