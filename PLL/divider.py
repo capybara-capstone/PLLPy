@@ -35,7 +35,19 @@ def div(input, o, VDD, VSS, N, stored_state):
 
 
     if ((a[1] == VDD and a[0] == VSS) or (a[1] == VSS and a[0] == VDD)): #transition up or down
-        if (transition_count == transition_count_max-1):
+        if ((startFlag == True) and (transition_count <=N)):
+            if (transition_count != N):
+                transition_count +=1 
+                o.append(VSS) #XXX output, some buffer
+            else: #transition_count == N and starting first cycle
+                transition_count = 0
+                o.append(a[1])
+                startFlag = False 
+                if (a[1] == VDD):
+                    ton = True
+                else:
+                    ton = False
+        elif (transition_count == transition_count_max-1):
             transition_count = 0
             if (ton):
                 o.append(VSS)
