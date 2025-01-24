@@ -102,14 +102,13 @@ def parse_args(settings: Settings, config_file: str = "config.json"):
     # Reading VCO configurations
     VCO = check_arg("VCO", args[config_name])
     if (VCO):
-        default_frequency = check_arg("default_frequency", VCO)
         k_vco = check_arg("k_vco", VCO)
         fo = check_arg("fo", VCO)
         if k_vco:
             settings.vco["k_vco"] = k_vco
         if fo:
             settings.vco["fo"] = fo
-        logger.info(f"Setting VCO settings...\n\t\tdefault_frequency:\t{default_frequency}\n\t\tk_vco:\t{k_vco}\n\t\tfo:\t{fo}")
+        logger.info(f"Setting VCO settings...\n\t\tk_vco:\t{k_vco}\n\t\tfo:\t{fo}")
         if (ref_clock == None):
             logger.info(f"Ref clock setting not found, running VCO only.")
             logger.info(f"ENDing config setting!")
