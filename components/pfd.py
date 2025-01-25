@@ -11,22 +11,29 @@ from components.buffer import Buffer
 
 
 class Pfd(Settings):
-    """Loop filder class"""
+    """Loop filter class"""
 
-    def __init__(self, env):
+    def __init__(self, settings: Settings):
         super().__init__()
-        self.env = env
+        # Set up the environment 
+        self.env = settings.env
+
+        # Set immutable variables, get the capactior, gain, and resistive values from the settings
         self.name = 'PFD'
-        self.input_a = Buffer(env, 'Loop Filter Input A')
-        self.input_b = Buffer(env, 'Loop Filter Input B')
-        self.output = Buffer(env, 'Loop Filter Output')
-        self.capacitors = self.pfd['capacitors']
-        self.resistors = self.pfd['resistors']
-        self.gains = self.pfd['gains']
+        self.capacitors = settings.pfd['capacitors']
+        self.resistors = settings.pfd['resistors']
+        self.gains = settings.pfd['gains']
+
+        # In/out buffers
+        self.input_a = Buffer(self.env, 'Loop Filter Input A')
+        self.input_b = Buffer(self.env, 'Loop Filter Input B')
+        self.output = Buffer(self.env, 'Loop Filter Output')
+
+        # State Variables
         self.h = signal.TransferFunction([1.0,],
                                          [self.capacitors[0], 0,]
                                          )
-        self.gain_histogram = Buffer(env, 'Loop Filter Gain')
+        self.gain_histogram = Buffer(self.env, 'Loop Filter Gain')
         self.last = [0, 0]
         self.state = 0
         self.log = None
@@ -34,7 +41,7 @@ class Pfd(Settings):
         self.setup()
 
     def setup(self):
-        """Set up dividor"""
+        """Set up PFD Loop Filter"""
         self.log = self.get_logger(self.name)
         self.log.info(
             'Loop Filter created with name %s', self.name)
@@ -44,7 +51,7 @@ class Pfd(Settings):
         # init_a = yield self.input_a.buffer.get()
         # init_b = yield self.input_b.buffer.get()
         # self.last = [init_a, init_b]
-        self.log.info('Starting %s', self.name)
+        self.log.info('Starting %s with capacitors %s, resistors %s, and gain %s', self.name, self.capacitors, self.resistors, self.gains)
         while True:
             current_sample_a = yield self.input_a.buffer.get()
             current_sample_b = yield self.input_b.buffer.get()

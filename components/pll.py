@@ -24,25 +24,32 @@ class Pll():
             self.setup()
 
     def setup(self):
-        """Set up dividor"""
+        """Set up divider"""
         self.log = self.settings.get_logger(self.name)
 
     def start(self):
         """Start PLL simulation"""
-        clk = self.add_components(Vco(self.env, 'CLK', clk=True))
-        lpd = self.add_components(Lpd(self.env))
-        pfd = self.add_components(Pfd(self.env))
-        vco = self.add_components(Vco(self.env))
-        div = self.add_components(Divider(self.env))
+        clk = self.add_components(Vco(self.settings, 'CLK', clk=True))
+        lpd = self.add_components(Lpd(self.settings))
+        pfd = self.add_components(Pfd(self.settings))
+        vco = self.add_components(Vco(self.settings))
+        div = self.add_components(Divider(self.settings))
 
         # Interconnect modules
         lpd.input_a = clk.output
 
         pfd.input_a = lpd.output_up
         pfd.input_b = lpd.output_down
+        pfd.gains = self.settings.pfd["gains"]
+        pfd.resistors = self.settings.pfd["resistors"]
+        pfd.capacitors = self.settings.pfd["capacitors"]
 
         vco.input = pfd.output
+        vco.k_vco = self.settings.vco["k_vco"]
+        vco.fo = self.settings.vco["fo"]
+
         div.input = vco.output
+        div.n = self.settings.divider["n"]
 
         lpd.input_b = div.output
 

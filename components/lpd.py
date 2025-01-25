@@ -11,18 +11,24 @@ from components.settings import Settings
 class Lpd(Settings):
     """Linear Phase Detector"""
 
-    def __init__(self, env):
+    def __init__(self, settings: Settings):
         super().__init__()
-        self.env = env
+        # Set up the environment
+        self.env = settings.env
+
+        # Set immutable variables
         self.name = 'LPD'
         self.log = None
-        self.input_a = Buffer(env, 'LPD Input A')
-        self.input_b = Buffer(env, 'LPD Input B')
-        self.output_up = Buffer(env, 'LPD Output UP')
-        self.output_down = Buffer(env, 'LPD Output DOWN')
+
+        # In/out Buffers
+        self.input_a = Buffer(self.env, 'LPD Input A')
+        self.input_b = Buffer(self.env, 'LPD Input B')
+        self.output_up = Buffer(self.env, 'LPD Output UP')
+        self.output_down = Buffer(self.env, 'LPD Output DOWN')
+
+        # State Variables
         self.last = [0, 0]
         self.results = [0, 0]
-
         self.input_b.buffer.put(0)
         self.output_up.buffer.put(0)
         self.output_down.buffer.put(0)
@@ -30,7 +36,7 @@ class Lpd(Settings):
         self.setup()
 
     def setup(self):
-        """Set up dividor"""
+        """Set up divider"""
         self.log = self.get_logger(self.name)
         self.log.info(
             'Linear Phase Detector created with name %s', self.name)

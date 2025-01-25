@@ -11,22 +11,28 @@ from components.buffer import Buffer
 class Divider(Settings):
     """Models Feedback divider"""
 
-    def __init__(self, env, n: int = 3):
+    def __init__(self, settings: Settings):
         super().__init__()
-        self.env = env
+        # Set up the environment 
+        self.env = settings.env
+        
+        # Set immutable variables, get the divider value from the settings
+        self.n = settings.divider["n"]
         self.name = 'Divider'
         self.log = None
-        self.input = Buffer(env=self.env, name=f'N={n} Divider Input')
-        self.output = Buffer(env=self.env, name=f'N={n} Divider Output')
-        self.n = n
+
+        # In/out buffers
+        self.input = Buffer(env=self.env, name=f'N={self.n} Divider Input')
+        self.output = Buffer(env=self.env, name=f'N={self.n} Divider Output')
+
+        # State variables
         self.transition_count = 0
         self.ton = False
         self.last_sample = 0
-
         self.setup()
 
     def setup(self):
-        """Set up dividor"""
+        """Set up divider"""
         self.log = self.get_logger(self.name)
         self.log.info('Divider created with name %s and N %d',
                       self.name, self.n)

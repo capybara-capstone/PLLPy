@@ -15,15 +15,20 @@ class Vco(Settings):
     of the output.
     """
 
-    def __init__(self, env, name='VCO', clk=False):
+    def __init__(self, settings, name='VCO', clk=False):
         super().__init__()
-        self.env = env
+        # Set up the environment 
+        self.env = settings.env
+
+        # Set immutable variables, get the gain & frequency value from the settings
         self.name = name
         self.clk_flag = clk
-        self.input = Buffer(env, f'{self.name} Input')
-        self.output = Buffer(env, f'{self.name} Output')
-        self.gain = self.clk['k_vco'] if self.clk else self.vco['k_vco']
-        self.frequency = self.clk['fo'] if self.clk else self.vco['fo']
+        self.gain = self.clk['k_vco'] if self.clk else settings.vco['k_vco']
+        self.frequency = self.clk['fo'] if self.clk else settings.vco['fo']
+
+        # In/out buffers
+        self.input = Buffer(self.env, f'{self.name} Input')
+        self.output = Buffer(self.env, f'{self.name} Output')
         self.last = 0
         self.log = None
         self.setup()
@@ -31,10 +36,10 @@ class Vco(Settings):
             self.input.buffer.put(0)
 
     def setup(self):
-        """Set up dividor"""
+        """Set up VCO"""
         self.log = self.get_logger(self.name)
         self.log.info(
-            'Voltage Controlled Oscillator created with name %s', self.name)
+            'Voltage Controlled Oscillator created with name %s with gain %s, and fo %s', self.name, self.gain, self.frequency)
 
     def start(self):
         """Start VCO"""

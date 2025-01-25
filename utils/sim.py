@@ -10,15 +10,19 @@ from tqdm import tqdm
 from components.pll import Pll
 from components.settings import Settings
 from components.divider import Divider
+from components.vco import Vco
+from components.pfd import Pfd
+from components.lpd import Lpd
 # pylint: disable=W0718
 
 
 class Sim():
     """Sim class"""
 
-    def __init__(self, name='SIM'):
+    def __init__(self, config_file: str = None, name='SIM'):
         self.settings = None
         self.name = name
+        self.config_file = config_file
         self.log = None
         self.components = {}
         self.sim_setup()
@@ -41,11 +45,10 @@ class Sim():
         logging.config.fileConfig(os.path.join(logger_config_path))
         self.log = logging.getLogger(self.name)
 
-        # Settings setup
+        # Settings setup, calls parse_args to parse the json. 
         self.settings = Settings()
-        parse_args(self.settings)
+        parse_args(self.settings, self.config_file)
         
-
 
     def add_components(self, component):
         """Adds component instance to PLL components dict
@@ -76,14 +79,36 @@ class Sim():
 
     def add_divider(self, name: str = None):
         """Adds a divider to the simulation"""
-        divider = Divider(self.env)
+        divider = Divider(self.settings)
         if name is not None:
             divider.name = name
         self.add_components(component=divider)
 
+    def add_VCO(self, name: str = None):
+        """Adds a VCO to the simulation"""
+        vco = Vco(self.settings)
+        if name is not None:
+            vco.name = name
+        self.add_components(component=vco)
+
+    def add_PFD_loop_filter(self, name: str = None):
+        """Adds a pfd_loop_filter to the simulation"""
+        pfd_loop_filter = Pfd(self.settings)
+        if name is not None:
+            pfd_loop_filter.name = name
+        self.add_components(component=pfd_loop_filter)
+
+    def add_LPD(self, name: str = None):
+        """Adds a LPD to the simulation"""
+        lpd = Lpd(self.settings)
+        if name is not None:
+            lpd.name = name
+        self.add_components(component=lpd)        
+
     def add_pll(self, name: str = None):
-        """Adds pll to similation"""
+        """Adds pll (all blocks) to similation"""
         pll = Pll(self.settings)
+        
         if name is not None:
             pll.name = name
         self.add_components(component=pll)
