@@ -4,6 +4,7 @@ from bokeh.plotting import show
 from bokeh.layouts import gridplot
 from components.settings import Settings
 from components.buffer import Buffer
+import pandas as pd
 
 # pylint: disable=W1203
 
@@ -19,12 +20,13 @@ class Vco(Settings):
         super().__init__()
         # Set up the environment 
         self.env = settings.env
+        self.settings = settings
 
         # Set immutable variables, get the gain & frequency value from the settings
         self.name = name
         self.clk_flag = clk
-        self.gain = self.clk['k_vco'] if self.clk else settings.vco['k_vco']
-        self.frequency = self.clk['fo'] if self.clk else settings.vco['fo']
+        self.gain = settings.clk['k_vco'] if self.clk else settings.vco['k_vco']
+        self.frequency = settings.clk['fo'] if self.clk else settings.vco['fo']
 
         # In/out buffers
         self.input = Buffer(self.env, f'{self.name} Input')
@@ -65,17 +67,20 @@ class Vco(Settings):
             self.last = total_integral
             yield self.env.timeout(self.time_step)
 
-    def unit_test(self):
+    def unit_test(self, unit_test: pd.DataFrame):
         """Unit test for modules"""
         print(f"@ {self.env.now}| Testing VCO")
-        number_of_elements = floor(self.sim_time / self.time_step)
+        number_of_elements = floor(self.settings.sim_time / self.settings.time_step)
         time = 0
         for i in range(0, number_of_elements):
-            sample = 1+sin(i/floor(number_of_elements/10))
+            sample = unit_test.v_in[i]
             self.input.buffer.put(sample)
             self.input.monitor.append((time, sample))
-            time += self.time_step
-        self.env.process(self.start())
+            time += self.settings.time_step
+            
+        self.settings.env.process(self.start())
+        # self.settings.env.run(until=self.settings.sim_time)
+
 
     def show(self, plot: bool = False):
         """Shows buffer occupancy"""
