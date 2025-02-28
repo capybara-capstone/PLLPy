@@ -1,6 +1,5 @@
 #!/bin/zsh
 
-which python
 if [ ! -d "pll_venv" ]; then
     echo "Creating virtual environment..."
     python -m venv pll_venv
@@ -9,8 +8,10 @@ else
     echo "Virtual environment already exists."
 fi
 
-source "pll_venv/bin/activate"
-which python
+if [ "$1" != "1" ]; then
+    source pll_venv/bin/activate
+fi
+
 if [ -f "setup/requirements.txt" ]; then
     echo "Installing requirements from requirements.txt..."
     pip install -r setup/requirements.txt
