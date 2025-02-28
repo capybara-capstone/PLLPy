@@ -29,4 +29,4 @@ jobs:
         if [ -f setup/requirements.txt ]; then pip install -r setup/requirements.txt; fi
     - name: Test with pytest
       run: |
-        sim_perf.py
+        python setup/setup_test.py
