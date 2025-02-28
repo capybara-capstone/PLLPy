@@ -12,6 +12,8 @@ A Python library for PLL simulation
 PLLPy is a Python library for simulating different PLL architectures. Based on [Wireline-Simulink](https://github.com/tchancarusone/Wireline-Simulink), PLLPy aims at being a modular and configurable PLL simulator
 for use as a design aide and a teaching tool. It is also fully integratable with [SerDesPy](https://github.com/richard259/serdespy), a SerDes modelling and simulation tool.
 
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 ## Features
 TBD...
 

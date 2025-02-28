@@ -1,22 +1,16 @@
-#!/bin/bash
+#!/bin/zsh
 
-is_windows() {
-    [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OSTYPE" == "win32" ]]
-}
-
+which python
 if [ ! -d "pll_venv" ]; then
     echo "Creating virtual environment..."
     python -m venv pll_venv
+    chmod +x "pll_venv/bin/activate"
 else
     echo "Virtual environment already exists."
 fi
 
-if is_windows; then
-    .\pll_venv\Scripts\activate.ps1 #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-else
-    source pll_venv/bin/activate
-fi
-
+source "pll_venv/bin/activate"
+which python
 if [ -f "setup/requirements.txt" ]; then
     echo "Installing requirements from requirements.txt..."
     pip install -r setup/requirements.txt
@@ -25,11 +19,7 @@ else
     exit 1
 fi
 
-if is_windows; then
-    $env:PYTHONPATH = ".\components;$env:PYTHONPATH"
-else
-    export PYTHONPATH=$PYTHONPATH:'./components'
-fi
+export PYTHONPATH="$PYTHONPATH:./components"
 
 if [ -f "setup/setup_test.py" ]; then
     echo "Running the Python script..."
