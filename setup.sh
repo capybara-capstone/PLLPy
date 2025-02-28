@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 if [ ! -d "pll_venv" ]; then
     echo "Creating virtual environment..."
@@ -8,9 +8,7 @@ else
     echo "Virtual environment already exists."
 fi
 
-if [ "$1" != "1" ]; then
-    source pll_venv/bin/activate
-fi
+source pll_venv/bin/activate
 
 if [ -f "setup/requirements.txt" ]; then
     echo "Installing requirements from requirements.txt..."
