@@ -23,6 +23,6 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
-    - name: Test base componetns
+    - name: Test base modules
       run: |
         ./setup.sh
