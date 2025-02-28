@@ -12,7 +12,7 @@ else
 fi
 
 if is_windows; then
-    pll_venv/Scripts/activate
+    .\pll_venv\Scripts\activate.ps1 #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 else
     source pll_venv/bin/activate
 fi
@@ -26,8 +26,7 @@ else
 fi
 
 if is_windows; then
-    set PYTHONPATH=%PYTHONPATH%
-    ./components
+    $env:PYTHONPATH = ".\components;$env:PYTHONPATH"
 else
     export PYTHONPATH=$PYTHONPATH:'./components'
 fi
