@@ -243,3 +243,21 @@ class Pll:
                            [lpd_b_f],
                            [lf_f],
                            [vco_f]], sizing_mode='scale_both'))
+
+    def save_to_file(self, path):
+        
+        #save REF_CLK
+        np.save(path+"REF_CLK", self.components['clk'].io['output']) 
+        #save LPD_A
+        np.save(path+"LPD_A", self.components['lpd'].io['output_a']) 
+        #save LPD_B
+        np.save(path+"LPD_B", self.components['lpd'].io['output_b'])
+        #save LF
+        np.save(path+"LF", self.components['lf'].io['output'])
+        #save VCO
+        np.save(path+"VCO", self.components['vco'].io['output'])
+        #save DIVIDER
+        np.save(path+"DIVIDER", self.components['div'].io['output'])
+
+        #save TIME ARRAY
+        np.save(path+"TIME", self.time_array)
