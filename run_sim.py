@@ -10,7 +10,4 @@ settings = Settings()
 pll = Pll(settings=settings)
 pll.start_and_monitor()
 pll.show(plot_type=settings.pll['plot_mode'])
-
-settings.lf['R'] = 8400
-pll.start_and_monitor()
-pll.show(plot_type=settings.pll['plot_mode'])
+pll.save_to_file("./logs/")
