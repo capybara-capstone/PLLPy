@@ -25,7 +25,7 @@ class Settings:
         self.vco = {'k_vco': 6.2832e9,
                     'fo': 1000e6,
                     'plot_mode': self.global_plot_mode}
-        self.divider = {'n': 60,
+        self.divider = {'n': 10,
                         'plot_mode': self.global_plot_mode}
         self.lpd = {
             'plot_mode': self.global_plot_mode}
