@@ -16,6 +16,7 @@ The simulation can be visualized locally or using web-based plots.
 from collections import deque
 from matplotlib import pyplot as plt
 import numpy as np
+import serdespy as sdp
 from tqdm import tqdm
 from bokeh.plotting import figure, show
 from bokeh.layouts import gridplot
@@ -24,6 +25,7 @@ from components.vco import Vco
 from components.lf import LoopFilter
 from components.divider import Divider
 from utils.scope import Scope
+
 
 
 # pylint: disable=W0212
@@ -57,6 +59,26 @@ class Pll:
         self.scope = Scope(fit=scope_fit)
         self.output = deque([], maxlen=settings.sample_count)
         self.time_array = np.arange(0, settings.sim_time, settings.time_step)
+
+    def start_cdr(self, data):
+        
+        lpd = Lpd(settings=self.settings)
+        lf = LoopFilter(settings=self.settings)
+        vco = Vco(settings=self.settings)
+        div = Divider(settings=self.settings)
+
+        self.components = {'lpd': lpd,'lf': lf, 'vco': vco, 'div': div}
+
+        lf_out = 0
+        div_out = 0
+        for _ in range(self.settings.sample_count):
+            lpd_out_a, lpd_out_b = lpd._process(data[_], div_out)
+            lf_out = lf._process(lpd_out_a, lpd_out_b)
+            vco_out = vco._process(lf_out)
+            div_out = div._process(vco_out)
+
+            self.output.append(vco_out)
+        print('Recovered Clock')
 
     def start_and_monitor(self):
         """Starts the PLL simulation and monitors the progress.
@@ -244,10 +266,10 @@ class Pll:
                            [lf_f],
                            [vco_f]], sizing_mode='scale_both'))
 
-    def save_to_file(self, path):
+    def save_to_file(self, path, sim):
         
         #save REF_CLK
-        np.save(path+"REF_CLK", self.components['clk'].io['output']) 
+        if (sim == 'PLL'): np.save(path+"REF_CLK", self.components['clk'].io['output']) 
         #save LPD_A
         np.save(path+"LPD_A", self.components['lpd'].io['output_a']) 
         #save LPD_B
