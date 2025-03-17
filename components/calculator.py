@@ -30,19 +30,62 @@ def plot_data(x: np.ndarray, y: np.ndarray):
 
 
 pll_out = np.load("../logs/VCO.npy")
-pll_time = np.load("../logs/TIME.npy")
-offset_freq = 250E6
+
+test_jitter = np.load("../logs/jitter.npy")
+no_jitter = np.load("../logs/ideal.npy")
+
 time_step = 1E-11
-divider_n = 60
-clk_freq = 1E7
 
-target_freq = divider_n*clk_freq
+out_sample = []
 
-test_jitter = np.load("./jitter.npy")
-no_jitter = np.load("./ideal.npy")
+for i in range(10000,40000,1):
+    out_sample.append(pll_out[i])
+
 
 #what are we going to operate on?
-pll_out = test_jitter
+input_array = test_jitter
+
+
+#find 0 crossings
+cross_zero = []
+total_time = 0
+last_cross = 0
+num_cross = 0
+
+for i in range(1, len(input_array), 1):
+    
+    total_time = total_time + time_step
+
+    if(input_array[i] != input_array[i-1]):
+        cross_zero.append(total_time - last_cross)
+        last_cross = total_time
+        num_cross = num_cross + 1
+
+
+#find deviation
+mean_cross = np.mean(cross_zero)
+
+jitter_sequence = np.subtract(cross_zero, mean_cross)
+jitter_sequence = np.divide(jitter_sequence, mean_cross)
+
+
+#please god help me now
+phase_noise = fft(jitter_sequence)
+cross_period = (time_step*len(input_array)) / num_cross
+phase_noise_freq = fftfreq(len(phase_noise), cross_period)
+
+plot_data(phase_noise_freq, abs(phase_noise))
+plot_data(np.arange(0, len(jitter_sequence), 1), jitter_sequence)
+
+#rms to get jitter
+
+jitter = np.sqrt(np.mean(np.square(jitter_sequence)))
+
+print(jitter)
+
+
+
+'''
 
 #plot_data(pll_out, pll_time)
 
@@ -114,3 +157,5 @@ integral_result = abs(integral_result)
 jitter =((1/pll_fftfreq[max_index])/(2*math.pi))*math.sqrt(integral_result)
 
 print(jitter)
+
+'''
