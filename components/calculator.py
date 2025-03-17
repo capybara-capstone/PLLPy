@@ -31,13 +31,18 @@ def plot_data(x: np.ndarray, y: np.ndarray):
 
 pll_out = np.load("../logs/VCO.npy")
 pll_time = np.load("../logs/TIME.npy")
-offset_freq = 500E6
+offset_freq = 250E6
 time_step = 1E-11
 divider_n = 60
 clk_freq = 1E7
 
 target_freq = divider_n*clk_freq
 
+test_jitter = np.load("./jitter.npy")
+no_jitter = np.load("./ideal.npy")
+
+#what are we going to operate on?
+pll_out = test_jitter
 
 #plot_data(pll_out, pll_time)
 
@@ -46,19 +51,20 @@ print(len(pll_out))
 out_sample = []
 time_sample = []
 
-for i in range(30000,40000,1):
-    out_sample.append(pll_out[i])
-    time_sample.append(pll_time[i])
+#for i in range(0,40000,1):
+#    out_sample.append(pll_out[i])
+#    time_sample.append(pll_time[i])
 
-pll_fft = fft(out_sample)
+pll_fft = fft(pll_out)
 pll_fftfreq = fftfreq(len(pll_fft), time_step)
 
 pll_fft = pll_fft**2
 
-for x in range(0, len(pll_fft), 1):
-    pll_fft[x] = abs(pll_fft[x])
+#for x in range(0, len(pll_fft), 1):
+#    pll_fft[x] = abs(pll_fft[x])
+pll_fft = abs(pll_fft)
 
-#plot_data(pll_fftfreq, abs(pll_fft))
+plot_data(pll_fftfreq, abs(pll_fft))
 #plot_data(pll_time, pll_out)
 max_index = 0
 last_max = 0
@@ -91,8 +97,15 @@ plot_data(centred_spike_freq, centred_spike)
 #integrate
 integral_result = 0
 
-for x in range(max_index, len(centred_spike), 1):
-    integral_result = integral_result + (centred_spike[x] * (centred_spike_freq[x] - centred_spike_freq[x-1]))
+#integrate around frequency
+#for x in range(max_index, len(centred_spike), 1):
+#    integral_result = integral_result + (centred_spike[x] * (centred_spike_freq[x] - centred_spike_freq[x-1]))
+
+#integrate from 0 to half frequency
+for x in range(0, round(len(centred_spike)/2), 1):
+    integral_result = integral_result + (pll_fft[x] * (pll_fftfreq[x] - pll_fftfreq[x-1]))
+
+
 
 integral_result = abs(integral_result)
 
