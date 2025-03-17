@@ -16,7 +16,6 @@ The simulation can be visualized locally or using web-based plots.
 from collections import deque
 from matplotlib import pyplot as plt
 import numpy as np
-import serdespy as sdp
 from tqdm import tqdm
 from bokeh.plotting import figure, show
 from bokeh.layouts import gridplot
@@ -62,16 +61,19 @@ class Pll:
 
     def start_cdr(self, data):
         
+        clk = Vco(settings=self.settings, clk=True)
         lpd = Lpd(settings=self.settings)
         lf = LoopFilter(settings=self.settings)
         vco = Vco(settings=self.settings)
         div = Divider(settings=self.settings)
 
-        self.components = {'lpd': lpd,'lf': lf, 'vco': vco, 'div': div}
+        self.components = {'clk': clk, 'lpd': lpd,
+                                  'lf': lf, 'vco': vco, 'div': div}
 
         lf_out = 0
         div_out = 0
         for _ in range(self.settings.sample_count):
+            print("hopefully the data = ", data[_])
             lpd_out_a, lpd_out_b = lpd._process(data[_], div_out)
             lf_out = lf._process(lpd_out_a, lpd_out_b)
             vco_out = vco._process(lf_out)
@@ -218,12 +220,12 @@ class Pll:
             plt.show()
 
         elif plot_type == 'web':
-            clk_f = figure(title='CLK Output', x_axis_label='Seconds', y_axis_label='Volts',
-                           width=800, height=200, sizing_mode='scale_both')
+           # clk_f = figure(title='CLK Output', x_axis_label='Seconds', y_axis_label='Volts',
+            #               width=800, height=200, sizing_mode='scale_both')
 
-            clk_f.step(self.time_array, [*self.components['clk'].io['output']],
-                       line_width=2,
-                       mode='center')
+           # clk_f.step(self.time_array, [*self.components['clk'].io['output']],
+            #           line_width=2,
+              #         mode='center')
 
             div_f = figure(title='Divider Output', x_axis_label='Seconds', y_axis_label='Volts',
                            width=800, height=200, sizing_mode='scale_both')
@@ -259,17 +261,24 @@ class Pll:
                        line_width=2,
                        mode='center')
 
-            show(gridplot([[clk_f],
+            show(gridplot([
                            [div_f],
                            [lpd_a_f],
                            [lpd_b_f],
                            [lf_f],
                            [vco_f]], sizing_mode='scale_both'))
 
-    def save_to_file(self, path, sim):
+            #show(gridplot([[clk_f],
+                   #        [div_f],
+                     #      [lpd_a_f],
+                        #   [lpd_b_f],
+                         #  [lf_f],
+                         #  [vco_f]], sizing_mode='scale_both'))
+
+    def save_to_file(self, path):
         
         #save REF_CLK
-        if (sim == 'PLL'): np.save(path+"REF_CLK", self.components['clk'].io['output']) 
+        np.save(path+"REF_CLK", self.components['clk'].io['output']) 
         #save LPD_A
         np.save(path+"LPD_A", self.components['lpd'].io['output_a']) 
         #save LPD_B
