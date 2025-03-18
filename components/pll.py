@@ -73,7 +73,6 @@ class Pll:
         lf_out = 0
         div_out = 0
         for _ in range(self.settings.sample_count):
-            print("hopefully the data = ", data[_])
             lpd_out_a, lpd_out_b = lpd._process(data[_], div_out)
             lf_out = lf._process(lpd_out_a, lpd_out_b)
             vco_out = vco._process(lf_out)

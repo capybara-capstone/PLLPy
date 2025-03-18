@@ -9,35 +9,35 @@ pll = Pll(settings=settings)
 
 #set up paramaters
 nyquist_f = 2e7
-samples_per_symbol = 20
+samples_per_symbol = 40 #i.e the period?
 voltage_levels = np.array([0,1])
 
-#pseudo-random data for simulation
-data = sdp.prbs22(11)
+#pseudo-random data for simulation, an example
+data = sdp.prbs13(11)
 
 #set up transmitter waveform
 TX = sdp.Transmitter(data, voltage_levels, nyquist_f)
 TX.oversample(samples_per_symbol)
-print(type(TX.signal_ideal))
-print(TX.signal_ideal)
 data_in = TX.signal_ideal
 
 #start CDR
-pll.start_cdr(data_in)
+pll.start_cdr(data_in) #need to truncate to match samples in PLL
 
 #get recovered clock
 pll.show(plot_type='web')
 pll.save_to_file("./logs/")
 pll_out = np.load("logs/VCO.npy")
-print(pll_out)
 
-# sample input datastream again with recovered clock (i.e PLL output log)
-#todo
+# sample input datastream again with recovered clock (i.e PLL output log) on rising edge and send it to the decision circuit
+trigger_val = 0.5
+threshold = 0.5
+rising_edge = np.flatnonzero((data_in[:-1] < trigger_val) & (data_in[1:] > trigger_val))+1
+retimed_data = []
 
-# send it to the decision circuit
-#sdp.nrz_decision(x,t)
-
-# compare with input datastream to get BER
-#err = sdp.prbs_checker(10, data, decision)
-#print("Bit Error Ratio = ", err[0]/(decision[10:-10].size*2))
+for i in settings.sample_count:
+    retimed_data.append(sdp.nrz_decision(data_in[rising_edge[i]], threshold))
+    
+# compare retimed data with input datastream to get BER
+err = sdp.prbs_checker(13, data, retimed_data)
+print("Bit Error Ratio = ", err[0]/(retimed_data.size))
             
