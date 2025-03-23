@@ -73,10 +73,10 @@ class Pll:
         lf_out = 0
         div_out = 0
         for _ in range(self.settings.sample_count):
-            lpd_out_a, lpd_out_b = lpd._process(data[_], div_out)
-            lf_out = lf._process(lpd_out_a, lpd_out_b)
-            vco_out = vco._process(lf_out)
-            div_out = div._process(vco_out)
+            lpd_out_a, lpd_out_b = lpd._process_and_monitor(data[_], div_out)
+            lf_out = lf._process_and_monitor(lpd_out_a, lpd_out_b)
+            vco_out = vco._process_and_monitor(lf_out)
+            div_out = div._process_and_monitor(vco_out)
 
             self.output.append(vco_out)
         print('Recovered Clock')
@@ -163,7 +163,7 @@ class Pll:
             self.output.append(vco_out)
         print('PLL Locked')
 
-    def show(self, plot_type='local'):
+    def show(self, plot_type='local', sim_type='PLL', input=[]):
         """Generates and displays plots of the simulation outputs.
 
         This method generates plots for the various components of the PLL system
@@ -186,9 +186,14 @@ class Pll:
         """
         if plot_type == 'local':
             fig, axes = plt.subplots(6, 1, figsize=(6, 10))
-            axes[0].plot(self.time_array,
-                         self.components['clk'].io['output'], color='b')
-            axes[0].set_title('CLK Output', loc='left')
+            if (type == 'PLL'):
+                axes[0].plot(self.time_array,
+                             self.components['clk'].io['output'], color='b')
+                axes[0].set_title('CLK Output', loc='left')
+            else:
+                axes[0].plot(self.time_array,
+                             input, color='b')
+                axes[0].set_title('Data Input', loc='left')
             axes[0].grid(True)
             axes[1].plot(self.time_array, self.components['div'].io['output'],
                          color='r')
@@ -219,13 +224,21 @@ class Pll:
             plt.show()
 
         elif plot_type == 'web':
-           # clk_f = figure(title='CLK Output', x_axis_label='Seconds', y_axis_label='Volts',
-            #               width=800, height=200, sizing_mode='scale_both')
+            if (type == 'PLL' ):
+                input_f = figure(title='CLK Output', x_axis_label='Seconds', y_axis_label='Volts',
+                               width=800, height=200, sizing_mode='scale_both')
+    
+                input_f.step(self.time_array, [*self.components['clk'].io['output']],
+                           line_width=2,
+                           mode='center')
+            else:
+                input_f = figure(title='Data Input', x_axis_label='Seconds', y_axis_label='Volts',
+                               width=800, height=200, sizing_mode='scale_both')
 
-           # clk_f.step(self.time_array, [*self.components['clk'].io['output']],
-            #           line_width=2,
-              #         mode='center')
-
+                input_f.step(self.time_array, input,
+                           line_width=2,
+                           mode='center')
+                
             div_f = figure(title='Divider Output', x_axis_label='Seconds', y_axis_label='Volts',
                            width=800, height=200, sizing_mode='scale_both')
 
@@ -260,19 +273,12 @@ class Pll:
                        line_width=2,
                        mode='center')
 
-            show(gridplot([
-                           [div_f],
-                           [lpd_a_f],
-                           [lpd_b_f],
-                           [lf_f],
-                           [vco_f]], sizing_mode='scale_both'))
-
-            #show(gridplot([[clk_f],
-                   #        [div_f],
-                     #      [lpd_a_f],
-                        #   [lpd_b_f],
-                         #  [lf_f],
-                         #  [vco_f]], sizing_mode='scale_both'))
+            show(gridplot([[input_f],
+                          [div_f],
+                          [lpd_a_f],
+                          [lpd_b_f],
+                          [lf_f],
+                          [vco_f]], sizing_mode='scale_both'))
 
     def save_to_file(self, path):
         
