@@ -23,20 +23,24 @@ class Settings:
         self.sim_time = sim_time
         self.log = {'log_path': os.path.join(os.getcwd(), 'logs')}
         self.clk = {'k_vco': 1.2566e8,
-                    'fo': 0,
+                    'fo': 1e7,
+                    'white_phase_noise_spectral_density': 0,
+                    'low_frequency_phase_noise': 0,
                     'plot_mode': self.global_plot_mode
                     }
         self.vco = {'k_vco': 6.2832e9,
                     'fo': 1000e6,
-                    'plot_mode': self.global_plot_mode,
+                    'white_phase_noise_spectral_density': 0,
+                    'low_frequency_phase_noise': 0,
+                    'plot_mode': self.global_plot_mode}
                     'id': 0
-                    }
         self.divider = {'n': 60,
                         'plot_mode': self.global_plot_mode}
         self.lpd = {
             'plot_mode': self.global_plot_mode}
         self.lf = {'pull_up': 25e-6,
                    'pull_down': 25e-6,
+                   'R': 8400,
                    'C': 16e-12,
                    'C2': 1.6e-12,
                    'R': 8400,

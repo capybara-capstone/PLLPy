@@ -77,6 +77,18 @@ class Vco:
         self.last: int = 0
         self.io = {'input': deque([], maxlen=settings.sample_count),
                    'output': deque([], maxlen=settings.sample_count)}
+        '''
+
+        #input and output needed for noise
+        self.k_vco: float = float(settings.clk['k_vco'] if clk else settings.vco['k_vco']) 
+        self.fo: float = float(settings.clk['fo'] * 2 * pi
+                                         if clk else settings.vco['fo'] *
+                                         2 * pi)
+        self.h0: float = float(settings.vco['white_phase_noise_spectral_density'])
+        self.n1: float = float( settings.vco['low_frequency_phase_noise'])
+
+        '''
+
 
     def _process_and_monitor(self, input_a: float) -> float:
         """
@@ -146,6 +158,26 @@ class Vco:
         self.last = phase_values[-1]
         cos_values = np.cos(phase_values)
         self.io['output'] = self.vss + (self.vdd - self.vss) * (cos_values < 0)
+'''
+    def add_white_noise(self, input_a, phase):
+        """
+        This function adds white noise to the output. Inputs are setup in the settings.py file.
+
+        :return: a value to be added to the integral in the VCO
+
+        **Returns**:
+            - float
+        """
+        if phase < math.pi:
+            return 0
+
+        target_frequency = self.k_vco*input_a + self.ko
+        white_noise = random.gauss(0, self.h0/2)
+
+        return white_noise * target_frequency
+
+'''
+
 
     def unit_test(self):
         """
