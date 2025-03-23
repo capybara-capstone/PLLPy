@@ -28,9 +28,9 @@ class Settings:
                     'low_frequency_phase_noise': 0,
                     'plot_mode': self.global_plot_mode
                     }
-        self.vco = {'k_vco': 6.2832e9,
+        self.vco = {'k_vco': 1e9,
                     'fo': 1000e6,
-                    'white_phase_noise_spectral_density': 0,
+                    'white_phase_noise_spectral_density': 10,
                     'low_frequency_phase_noise': 0,
                     'plot_mode': self.global_plot_mode}
                     'id': 0
@@ -40,7 +40,7 @@ class Settings:
             'plot_mode': self.global_plot_mode}
         self.lf = {'pull_up': 25e-6,
                    'pull_down': 25e-6,
-                   'R': 8400,
+                   'R': None,
                    'C': 16e-12,
                    'C2': 1.6e-12,
                    'R': 8400,

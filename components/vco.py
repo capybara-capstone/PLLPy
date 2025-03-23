@@ -8,9 +8,10 @@ additional monitoring capabilities for inputs and outputs.
 """
 
 from collections import deque
-from math import pi, cos
+from math import pi, cos, sqrt
 import pytest
 import numpy as np
+from random import gauss
 # pylint: disable=W1203
 
 
@@ -66,9 +67,9 @@ class Vco:
               output samples during simulation.
         """
         self.sample_count: int = settings.sample_count
-        self.k_vco_time: float = float(settings.clk['k_vco'] *
+        self.k_vco_time: float = float(settings.clk['k_vco'] * 2 * pi *
                                        settings.time_step if clk else settings.vco['k_vco'] *
-                                       settings.time_step)
+                                       2 * pi * settings.time_step)
         self.angular_time: float = float(settings.clk['fo'] * 2 * pi *
                                          settings.time_step if clk else settings.vco['fo'] *
                                          2 * pi * settings.time_step)
@@ -77,17 +78,21 @@ class Vco:
         self.last: int = 0
         self.io = {'input': deque([], maxlen=settings.sample_count),
                    'output': deque([], maxlen=settings.sample_count)}
-        '''
+ 
 
         #input and output needed for noise
-        self.k_vco: float = float(settings.clk['k_vco'] if clk else settings.vco['k_vco']) 
+        self.k_vco: float = float(settings.clk['k_vco'] * 2 * pi 
+                                         if clk else settings.vco['k_vco'] * 2 * pi) 
         self.fo: float = float(settings.clk['fo'] * 2 * pi
                                          if clk else settings.vco['fo'] *
                                          2 * pi)
-        self.h0: float = float(settings.vco['white_phase_noise_spectral_density'])
-        self.n1: float = float( settings.vco['low_frequency_phase_noise'])
+        self.h0: float = float(settings.clk['white_phase_noise_spectral_density'] 
+                        if clk else settings.vco['white_phase_noise_spectral_density'])
+        self.n1: float = float(settings.clk['low_frequency_phase_noise'] 
+                        if clk else settings.vco['low_frequency_phase_noise'])
+        self.white_noise: float = float(0)
 
-        '''
+        
 
 
     def _process_and_monitor(self, input_a: float) -> float:
@@ -107,9 +112,12 @@ class Vco:
             - float: The output value of the VCO after processing the input.
         """
         self.last += (input_a * self.k_vco_time + self.angular_time)
-        sin_out = cos(self.last)
-        out = self.vss + (self.vdd - self.vss) * (sin_out < 0)
 
+        #if self.last > 2*pi:
+            #self.last = 0
+
+        sin_out = cos(self.last + self.add_white_noise(input_a, self.last))
+        out = self.vss + (self.vdd - self.vss) * (sin_out < 0)
         self.io['input'].append(input_a)
         self.io['output'].append(out)
 
@@ -130,7 +138,11 @@ class Vco:
             - float: The output value of the VCO after processing the input.
         """
         self.last += (input_a * self.k_vco_time + self.angular_time)
-        sin_out = cos(self.last)
+
+        if self.last > 2*pi:
+            self.last = 0
+
+        sin_out = cos(self.last + self.add_white_noise(input_a, self.last))
         out = self.vss + (self.vdd - self.vss) * (sin_out < 0)
 
         return out
@@ -158,7 +170,7 @@ class Vco:
         self.last = phase_values[-1]
         cos_values = np.cos(phase_values)
         self.io['output'] = self.vss + (self.vdd - self.vss) * (cos_values < 0)
-'''
+
     def add_white_noise(self, input_a, phase):
         """
         This function adds white noise to the output. Inputs are setup in the settings.py file.
@@ -168,15 +180,14 @@ class Vco:
         **Returns**:
             - float
         """
-        if phase < math.pi:
-            return 0
+        if round(phase,2)%round(pi,2) == 0:
+            target_frequency = (self.k_vco*input_a) + self.fo
+            random_number = gauss(0, self.h0/2)
+            self.white_noise = random_number * sqrt(target_frequency)
 
-        target_frequency = self.k_vco*input_a + self.ko
-        white_noise = random.gauss(0, self.h0/2)
+        return self.white_noise
 
-        return white_noise * target_frequency
 
-'''
 
 
     def unit_test(self):
