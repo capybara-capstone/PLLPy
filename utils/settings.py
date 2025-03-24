@@ -38,11 +38,17 @@ class Settings:
         self.lf = {'pull_up': 25e-6,
                    'pull_down': 25e-6,
                    'C': 16e-12,
-                   'C2': 1.6e-12,
-                   'R': 6400,
+                   'C2': None,
+                   'R': None,
                    'id': 0,
                    'plot_mode': self.global_plot_mode
                    }
         self.pll = {
             'id': 0,
             'plot_mode': self.global_plot_mode}
+
+    def set_time(self, sim_time:int, time_step:int):
+        """Updates time parameters"""
+        self.sim_time = sim_time
+        self.time_step = time_step
+        self.sample_count = int(floor(sim_time/time_step))

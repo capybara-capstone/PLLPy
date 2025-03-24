@@ -75,10 +75,6 @@ class LoopFilter:
             'input_b': deque([], maxlen=settings.sample_count),
             'output': deque([], maxlen=settings.sample_count)
         }
-        # self.id = settings.lf['id']
-        # settings.lf['id'] += 1
-        # self.log, self.io_file = setup_log(
-        #     name=str(__name__).replace('.', '_'), id=self.id, settings=settings)
 
         self.time_step: float = float(settings.time_step)
         self.sample_count: int = settings.sample_count

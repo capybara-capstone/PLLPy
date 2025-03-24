@@ -24,6 +24,7 @@ from utils.scope import Scope
 # pylint: disable=C0301
 
 settings = Settings('LPD_Tester')
+settings.set_time(sim_time=4e-6, time_step=1e-11)
 scope = Scope(fit='stretch_width')
 time_array = np.arange(0, settings.sim_time, settings.time_step)
 
