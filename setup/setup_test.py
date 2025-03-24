@@ -7,7 +7,7 @@ from components.lf import LoopFilter
 from components.divider import Divider
 from utils.settings import Settings
 
-settings = Settings()
+settings = Settings(name='setup_settings')
 
 vco = Vco(settings=settings)
 if vco.unit_test() != 0:
