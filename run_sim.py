@@ -9,5 +9,5 @@ settings = Settings(name='pll_example')
 
 pll = Pll(settings=settings)
 pll.start_and_monitor()
-pll.show(plot_type=settings.pll['plot_mode'])
-pll.save_to_file("./logs/")
+pll.show(plot_type=settings.pll['plot_mode'], sim_type='PLL')
+# pll.save_to_file("./logs/")

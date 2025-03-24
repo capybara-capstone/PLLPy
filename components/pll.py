@@ -202,7 +202,7 @@ class Pll:
         """
         if plot_type == 'local':
             fig, axes = plt.subplots(6, 1, figsize=(6, 10))
-            if (type == 'PLL'):
+            if (sim_type == 'PLL'):
                 axes[0].plot(self.time_array,
                              self.components['clk'].io['output'], color='b')
                 axes[0].set_title('CLK Output', loc='left')
@@ -240,7 +240,7 @@ class Pll:
             plt.show()
 
         elif plot_type == 'web':
-            if (type == 'PLL'):
+            if (sim_type == 'PLL'):
                 input_f = figure(title='CLK Output', x_axis_label='Seconds', y_axis_label='Volts',
                                  width=800, height=200, sizing_mode='scale_both')
 
