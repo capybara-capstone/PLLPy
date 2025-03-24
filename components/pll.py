@@ -26,6 +26,7 @@ from components.divider import Divider
 from utils.scope import Scope
 
 
+
 # pylint: disable=W0212
 
 scope = Scope()
@@ -57,6 +58,28 @@ class Pll:
         self.scope = Scope(fit=scope_fit)
         self.output = deque([], maxlen=settings.sample_count)
         self.time_array = np.arange(0, settings.sim_time, settings.time_step)
+
+    def start_cdr(self, data):
+        
+        clk = Vco(settings=self.settings, clk=True)
+        lpd = Lpd(settings=self.settings)
+        lf = LoopFilter(settings=self.settings)
+        vco = Vco(settings=self.settings)
+        div = Divider(settings=self.settings)
+
+        self.components = {'clk': clk, 'lpd': lpd,
+                                  'lf': lf, 'vco': vco, 'div': div}
+
+        lf_out = 0
+        div_out = 0
+        for _ in range(self.settings.sample_count):
+            lpd_out_a, lpd_out_b = lpd._process_and_monitor(data[_], div_out)
+            lf_out = lf._process_and_monitor(lpd_out_a, lpd_out_b)
+            vco_out = vco._process_and_monitor(lf_out)
+            div_out = div._process_and_monitor(vco_out)
+
+            self.output.append(vco_out)
+        print('Recovered Clock')
 
     def start_and_monitor(self):
         """Starts the PLL simulation and monitors the progress.
@@ -140,7 +163,7 @@ class Pll:
             self.output.append(vco_out)
         print('PLL Locked')
 
-    def show(self, plot_type='local'):
+    def show(self, plot_type='local', sim_type='PLL', input=[]):
         """Generates and displays plots of the simulation outputs.
 
         This method generates plots for the various components of the PLL system
@@ -163,9 +186,14 @@ class Pll:
         """
         if plot_type == 'local':
             fig, axes = plt.subplots(6, 1, figsize=(6, 10))
-            axes[0].plot(self.time_array,
-                         self.components['clk'].io['output'], color='b')
-            axes[0].set_title('CLK Output', loc='left')
+            if (type == 'PLL'):
+                axes[0].plot(self.time_array,
+                             self.components['clk'].io['output'], color='b')
+                axes[0].set_title('CLK Output', loc='left')
+            else:
+                axes[0].plot(self.time_array,
+                             input, color='b')
+                axes[0].set_title('Data Input', loc='left')
             axes[0].grid(True)
             axes[1].plot(self.time_array, self.components['div'].io['output'],
                          color='r')
@@ -196,13 +224,21 @@ class Pll:
             plt.show()
 
         elif plot_type == 'web':
-            clk_f = figure(title='CLK Output', x_axis_label='Seconds', y_axis_label='Volts',
-                           width=800, height=200, sizing_mode='scale_both')
+            if (type == 'PLL' ):
+                input_f = figure(title='CLK Output', x_axis_label='Seconds', y_axis_label='Volts',
+                               width=800, height=200, sizing_mode='scale_both')
+    
+                input_f.step(self.time_array, [*self.components['clk'].io['output']],
+                           line_width=2,
+                           mode='center')
+            else:
+                input_f = figure(title='Data Input', x_axis_label='Seconds', y_axis_label='Volts',
+                               width=800, height=200, sizing_mode='scale_both')
 
-            clk_f.step(self.time_array, [*self.components['clk'].io['output']],
-                       line_width=2,
-                       mode='center')
-
+                input_f.step(self.time_array, input,
+                           line_width=2,
+                           mode='center')
+                
             div_f = figure(title='Divider Output', x_axis_label='Seconds', y_axis_label='Volts',
                            width=800, height=200, sizing_mode='scale_both')
 
@@ -237,12 +273,12 @@ class Pll:
                        line_width=2,
                        mode='center')
 
-            show(gridplot([[clk_f],
-                           [div_f],
-                           [lpd_a_f],
-                           [lpd_b_f],
-                           [lf_f],
-                           [vco_f]], sizing_mode='scale_both'))
+            show(gridplot([[input_f],
+                          [div_f],
+                          [lpd_a_f],
+                          [lpd_b_f],
+                          [lf_f],
+                          [vco_f]], sizing_mode='scale_both'))
 
     def save_to_file(self, path):
         
