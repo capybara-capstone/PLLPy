@@ -75,7 +75,8 @@ class Vco:
                                          2 * pi * settings.time_step)
         self.vss: float = float(settings.vss)
         self.vdd: float = float(settings.vdd)
-        self.last: int = 0
+        self.last: float = 0
+        self.last_output: int = 0
         self.io = {'input': deque([], maxlen=settings.sample_count),
                    'output': deque([], maxlen=settings.sample_count)}
  
@@ -91,6 +92,7 @@ class Vco:
         self.n1: float = float(settings.clk['low_frequency_phase_noise'] 
                         if clk else settings.vco['low_frequency_phase_noise'])
         self.white_noise: float = float(0)
+        self.add_noise_flag: int = 0
 
         
 
@@ -112,12 +114,13 @@ class Vco:
             - float: The output value of the VCO after processing the input.
         """
         self.last += (input_a * self.k_vco_time + self.angular_time)
-
-        #if self.last > 2*pi:
-            #self.last = 0
-
-        sin_out = cos(self.last + self.add_white_noise(input_a, self.last))
+        sin_out = cos(self.last + self.white_noise)
         out = self.vss + (self.vdd - self.vss) * (sin_out < 0)
+        
+        if self.last_output != out:
+            self.add_white_noise(input_a)
+
+        self.last_output = out
         self.io['input'].append(input_a)
         self.io['output'].append(out)
 
@@ -138,12 +141,14 @@ class Vco:
             - float: The output value of the VCO after processing the input.
         """
         self.last += (input_a * self.k_vco_time + self.angular_time)
+        sin_out = cos(self.last + self.white_noise)
+        
+        if self.last_output != out:
+            self.add_white_noise(input_a)
 
-        if self.last > 2*pi:
-            self.last = 0
 
-        sin_out = cos(self.last + self.add_white_noise(input_a, self.last))
         out = self.vss + (self.vdd - self.vss) * (sin_out < 0)
+        self.last_output = out
 
         return out
 
@@ -171,7 +176,7 @@ class Vco:
         cos_values = np.cos(phase_values)
         self.io['output'] = self.vss + (self.vdd - self.vss) * (cos_values < 0)
 
-    def add_white_noise(self, input_a, phase):
+    def add_white_noise(self, input_a):
         """
         This function adds white noise to the output. Inputs are setup in the settings.py file.
 
@@ -180,12 +185,9 @@ class Vco:
         **Returns**:
             - float
         """
-        if round(phase,2)%round(pi,2) == 0:
-            target_frequency = (self.k_vco*input_a) + self.fo
-            random_number = gauss(0, self.h0/2)
-            self.white_noise = random_number * sqrt(target_frequency)
-
-        return self.white_noise
+        target_frequency = (self.k_vco*input_a) + self.fo
+        random_number = gauss(0, self.h0/2)
+        self.white_noise = random_number * sqrt(target_frequency)
 
 
 

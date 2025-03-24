@@ -30,7 +30,7 @@ class Settings:
                     }
         self.vco = {'k_vco': 1e9,
                     'fo': 1000e6,
-                    'white_phase_noise_spectral_density': 10,
+                    'white_phase_noise_spectral_density': 1e-10,
                     'low_frequency_phase_noise': 0,
                     'plot_mode': self.global_plot_mode}
                     'id': 0
