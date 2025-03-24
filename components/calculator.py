@@ -81,7 +81,12 @@ plot_data(np.arange(0, len(jitter_sequence), 1), jitter_sequence)
 
 jitter = np.sqrt(np.mean(np.square(jitter_sequence)))
 
-print(jitter)
+#standard deviation
+
+std_dev = np.mean(np.absolute(jitter_sequence))
+
+print("RMS Jitter: " + str(jitter))
+print("Standard Deviation: " + str(std_dev)) 
 
 
 
