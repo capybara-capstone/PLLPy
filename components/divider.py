@@ -29,7 +29,6 @@ Methods:
 """
 
 from collections import deque
-from numpy import ndarray
 import pytest
 # pylint: disable=W1203
 

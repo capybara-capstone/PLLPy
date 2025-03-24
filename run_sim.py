@@ -2,7 +2,7 @@
 from components.pll import Pll
 from utils.settings import Settings
 
-settings = Settings()
+settings = Settings(name='pll_example')
 
 # pll = Pll(settings=settings)
 # pll.start()

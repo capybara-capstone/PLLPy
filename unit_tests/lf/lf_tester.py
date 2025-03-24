@@ -24,7 +24,7 @@ from utils.comparators import mse, cross_correlation
 from utils.scope import Scope
 # pylint: disable=C0301
 
-settings = Settings()
+settings = Settings(name='LF_Tester')
 scope = Scope(fit='stretch_width')
 time_array = np.arange(0, settings.sim_time, settings.time_step)
 
@@ -33,8 +33,8 @@ def test_c_filter():
     """
     Test the single integrator (capacitor) with variable input.
 
-    This test validates the performance of the LoopFilter with variable input signals. 
-    It compares the output of the filter with a target signal using Mean Squared Error (MSE) 
+    This test validates the performance of the LoopFilter with variable input signals.
+    It compares the output of the filter with a target signal using Mean Squared Error (MSE)
     and Cross-Correlation (CC) metrics. The results are plotted if the plot mode is enabled.
 
     **Steps**:
@@ -89,9 +89,9 @@ def test_rc_filter():
     """
     Test the RC filter with variable input.
 
-    This test validates the performance of the LoopFilter with a fixed resistor value 
-    and variable input signals. It compares the output of the filter with a target signal 
-    using Mean Squared Error (MSE) and Cross-Correlation (CC) metrics. The results are plotted 
+    This test validates the performance of the LoopFilter with a fixed resistor value
+    and variable input signals. It compares the output of the filter with a target signal
+    using Mean Squared Error (MSE) and Cross-Correlation (CC) metrics. The results are plotted
     if the plot mode is enabled.
 
     **Steps**:
@@ -140,6 +140,49 @@ def test_rc_filter():
 
     print(
         f'\nLPD Test 2: Same RC Filter - mse: {mse_out:.2f}% cc: {cc:.4f}%')
+
+    assert mse_out.item() > 97 or cc > 97
+
+
+def test_rcc_filter():
+    """Tests rcc filter"""
+    settings.lf['R'] = 6400
+    settings.lf['C'] = 16e-12
+    settings.lf['C2'] = 1.6e-12
+
+    dut = LoopFilter(settings=settings)
+
+    lf_var_ref_a = np.array(open(
+        'unit_tests/lf/data/lf_rcc_ref_a.csv', encoding='utf-8').readlines(),
+        dtype=float)
+
+    lf_var_ref_b = np.array(open(
+        'unit_tests/lf/data/lf_rcc_ref_b.csv', encoding='utf-8').readlines(),
+        dtype=float)
+
+    lf_var_target = np.array(open(
+        'unit_tests/lf/data/lf_rcc_ref_out.csv', encoding='utf-8').readlines(),
+        dtype=float)
+
+    dut.start(input_array_a=lf_var_ref_a, input_array_b=lf_var_ref_b)
+    out = dut.io['output']
+
+    mse_out = mse(data_1=lf_var_target, data_2=out)
+    cc = cross_correlation(data_1=lf_var_target, data_2=out)
+
+    plot_mode = settings.lf['plot_mode']
+    if plot_mode in ('local', 'web'):
+        scope.add_signal(time_array, lf_var_ref_a,
+                         'Test 3: LF Input A', plot_type=plot_mode)
+        scope.add_signal(time_array, lf_var_ref_b,
+                         'Test 3: LF Input B', plot_type=plot_mode)
+        scope.add_signal(time_array, lf_var_target,
+                         'Test 3: LF Target Output', plot_type=plot_mode)
+        scope.add_signal(
+            time_array, out, f'Test 3: LF Output - mse: {mse_out:.2f}% cc: {cc:.4f}%', plot_type=plot_mode)
+
+    print(
+        f'\nLPD Test 3: Same RCC Filter - mse: {mse_out:.2f}% cc: {cc:.4f}%')
 
     assert mse_out.item() > 97 or cc > 97
 

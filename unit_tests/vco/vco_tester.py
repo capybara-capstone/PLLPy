@@ -19,7 +19,7 @@ from utils.comparators import mse
 from utils.scope import Scope
 # pylint: disable=C0301
 
-settings = Settings()
+settings = Settings(name='VCO_Tester')
 scope = Scope()
 time_array = np.arange(0, settings.sim_time, settings.time_step)
 

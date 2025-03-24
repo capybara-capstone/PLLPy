@@ -19,7 +19,7 @@ from utils.comparators import mse, cross_correlation
 from utils.scope import Scope
 # pylint: disable=C0301
 
-settings = Settings()
+settings = Settings(name='Divider_Tester')
 scope = Scope(fit='stretch_width')
 time_array = np.arange(0, settings.sim_time, settings.time_step)
 
