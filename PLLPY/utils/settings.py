@@ -19,7 +19,7 @@ class Settings:
                  sim_time: int = 24e-6):
         self.name = name
         self.sample_count = int(floor(sim_time/time_step))
-        self.global_plot_mode = 'None'  # local web None
+        self.global_plot_mode = 'local'  # local web None
         self.vdd = vdd
         self.vss = vss
         self.time_step = time_step

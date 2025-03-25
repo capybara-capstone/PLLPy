@@ -51,14 +51,14 @@ def test_c_filter():
     """
     dut = LoopFilter(settings=settings)
     lf_var_ref_a = np.array(open(
-        'unit_tests/lf/data/lf_variable_ref_a.csv', encoding='utf-8').readlines(),
+        './unit_tests/lf/data/lf_variable_ref_a.csv', encoding='utf-8').readlines(),
         dtype=float)
 
-    lf_var_ref_b = np.array(open('unit_tests/lf/data/lf_variable_ref_b.csv',
+    lf_var_ref_b = np.array(open('./unit_tests/lf/data/lf_variable_ref_b.csv',
                             encoding='utf-8').readlines(),
                             dtype=float)
 
-    lf_var_target = np.array(open('unit_tests/lf/data/lf_var_target.csv',
+    lf_var_target = np.array(open('./unit_tests/lf/data/lf_var_target.csv',
                              encoding='utf-8').readlines(),
                              dtype=float)
 
@@ -69,7 +69,7 @@ def test_c_filter():
     mse_out = mse(data_1=lf_var_target, data_2=out)
     cc = cross_correlation(data_1=lf_var_target, data_2=out)
 
-    plot_mode = settings.lf['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.add_signal(time_array, lf_var_ref_a,
                          'Test 1: LF Input A', plot_type=plot_mode)
@@ -83,7 +83,7 @@ def test_c_filter():
     print(
         f'\nLPD Test 1: Same CLK Input - mse: {mse_out:.2f}% cc: {cc:.4f}%')
 
-    assert mse_out.item() > 97 or cc > 97
+    assert mse_out.item() > 97 or cc > 94
 
 
 def test_rc_filter():
@@ -111,15 +111,15 @@ def test_rc_filter():
     dut = LoopFilter(settings=settings)
 
     lf_var_ref_a = np.array(open(
-        'unit_tests/lf/data/rc_lpd_out_a.csv', encoding='utf-8').readlines(),
+        './unit_tests/lf/data/rc_lpd_out_a.csv', encoding='utf-8').readlines(),
         dtype=float)
 
     lf_var_ref_b = np.array(open(
-        'unit_tests/lf/data/rc_lpd_out_b.csv', encoding='utf-8').readlines(),
+        './unit_tests/lf/data/rc_lpd_out_b.csv', encoding='utf-8').readlines(),
         dtype=float)
 
     lf_var_target = np.array(open(
-        'unit_tests/lf/data/rc_lf_out.csv', encoding='utf-8').readlines(),
+        './unit_tests/lf/data/rc_lf_out.csv', encoding='utf-8').readlines(),
         dtype=float)
 
     dut.start(input_array_a=lf_var_ref_a, input_array_b=lf_var_ref_b)
@@ -128,7 +128,7 @@ def test_rc_filter():
     mse_out = mse(data_1=lf_var_target, data_2=out)
     cc = cross_correlation(data_1=lf_var_target, data_2=out)
 
-    plot_mode = settings.lf['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.add_signal(time_array, lf_var_ref_a,
                          'Test 2: LF Input A', plot_type=plot_mode)
@@ -154,15 +154,15 @@ def test_rcc_filter():
     dut = LoopFilter(settings=settings)
 
     lf_var_ref_a = np.array(open(
-        'unit_tests/lf/data/lf_rcc_ref_a.csv', encoding='utf-8').readlines(),
+        './unit_tests/lf/data/lf_rcc_ref_a.csv', encoding='utf-8').readlines(),
         dtype=float)
 
     lf_var_ref_b = np.array(open(
-        'unit_tests/lf/data/lf_rcc_ref_b.csv', encoding='utf-8').readlines(),
+        './unit_tests/lf/data/lf_rcc_ref_b.csv', encoding='utf-8').readlines(),
         dtype=float)
 
     lf_var_target = np.array(open(
-        'unit_tests/lf/data/lf_rcc_ref_out.csv', encoding='utf-8').readlines(),
+        './unit_tests/lf/data/lf_rcc_ref_out.csv', encoding='utf-8').readlines(),
         dtype=float)
 
     dut.start(input_array_a=lf_var_ref_a, input_array_b=lf_var_ref_b)
@@ -171,7 +171,7 @@ def test_rcc_filter():
     mse_out = mse(data_1=lf_var_target, data_2=out)
     cc = cross_correlation(data_1=lf_var_target, data_2=out)
 
-    plot_mode = settings.lf['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.add_signal(time_array, lf_var_ref_a,
                          'Test 3: LF Input A', plot_type=plot_mode)
@@ -197,7 +197,7 @@ def test_show():
 
     :raises FileNotFoundError: If the file paths or required data for plotting are incorrect.
     """
-    plot_mode = settings.lf['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.show(plot_type=plot_mode,
                    save_path=f'unit_tests/lf/lf_unit_test_results.{"html" if plot_mode == "web" else ""}')

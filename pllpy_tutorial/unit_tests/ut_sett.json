@@ -1,5 +1,6 @@
 {
     "name": "UpdatedSimulation",
+    "global_plot_mode": "local",
     "time_step": 1e-11,
     "sim_time": 4e-6,
     "clk": {

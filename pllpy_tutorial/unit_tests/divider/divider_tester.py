@@ -56,11 +56,11 @@ def test_n_60():
     """
     dut = Divider(settings=settings)
 
-    div_ref = np.array(open('unit_tests/divider/data/div_ref.csv',
+    div_ref = np.array(open('./unit_tests/divider/data/div_ref.csv',
                             encoding='utf-8').readlines(),
                        dtype=float)
 
-    div_target = np.array(open('unit_tests/divider/data/div_target.csv',
+    div_target = np.array(open('./unit_tests/divider/data/div_target.csv',
                                encoding='utf-8').readlines(),
                           dtype=float)
 
@@ -71,7 +71,7 @@ def test_n_60():
     mse_out = mse(data_1=div_target, data_2=out)
     cc = cross_correlation(data_1=div_target, data_2=out, mode='valid')
 
-    plot_mode = settings.divider['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.add_signal(time_array, div_ref,
                          'Test 1: Divider Input A', plot_type=plot_mode)
@@ -110,7 +110,7 @@ def test_show():
     **Example**:
         >>> test_show()
     """
-    plot_mode = settings.divider['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         save_path = f'unit_tests/divider/divider_unit_test_results.{"html" if plot_mode == "web" else "png"}'
         scope.show(plot_type=plot_mode, save_path=save_path)

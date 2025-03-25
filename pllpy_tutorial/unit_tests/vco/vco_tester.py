@@ -41,15 +41,15 @@ def test_sine_1ghz():
     dut = Vco(settings=settings)
 
     vco_ref_sine = np.array(open(
-        'unit_tests/vco/data/sine_1GHz_ref.csv', encoding='utf-8').readlines(), dtype=float)
+        './unit_tests/vco/data/sine_1GHz_ref.csv', encoding='utf-8').readlines(), dtype=float)
     vco_out_sine_target = np.array(open(
-        'unit_tests/vco/data/sine_1GHz_target.csv', encoding='utf-8').readlines(), dtype=float)
+        './unit_tests/vco/data/sine_1GHz_target.csv', encoding='utf-8').readlines(), dtype=float)
 
     dut.start(input_array=vco_ref_sine)
     out = dut.io['output']
     mse_out = mse(data_1=vco_out_sine_target, data_2=out)
 
-    plot_mode = settings.vco['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.add_signal(time_array, vco_ref_sine,
                          'Test 1: VCO Input', plot_type=plot_mode)
@@ -78,12 +78,12 @@ def test_clk():
     dut = Vco(settings=settings, clk=True)
     vco_ref_dc = np.ones(settings.sample_count, dtype=float)
     vco_out_dc_target = np.array(open(
-        'unit_tests/vco/data/dc_target.csv', encoding='utf-8').readlines(), dtype=float)
+        './unit_tests/vco/data/dc_target.csv', encoding='utf-8').readlines(), dtype=float)
     dut.start(input_array=vco_ref_dc)
     out = dut.io['output']
     mse_out = mse(data_1=vco_out_dc_target, data_2=out)
 
-    plot_mode = settings.vco['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.add_signal(time_array, vco_ref_dc,
                          'Test 2: VCO Input', plot_type=plot_mode)
@@ -107,7 +107,7 @@ def test_show():
     :param plot_mode: Specifies the plot type ('local' for `matplotlib` or 'web' for `Bokeh`).
     :param save_path: The path where the plot will be saved (if applicable). Default is `None`.
     """
-    plot_mode = settings.vco['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.show(plot_type=plot_mode,
                    save_path=f'unit_tests/vco/vco_unit_test_results.{"html" if plot_mode == "web" else ""}')

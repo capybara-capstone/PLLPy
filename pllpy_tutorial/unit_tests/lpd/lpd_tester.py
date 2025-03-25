@@ -44,13 +44,13 @@ def test_equal_input():
     # Test implementati
     dut = Lpd(settings=settings)
     lpd_clk_ref = np.array(open(
-        'unit_tests/lpd/data/clk_ref.csv', encoding='utf-8').readlines(), dtype=float)
+        './unit_tests/lpd/data/clk_ref.csv', encoding='utf-8').readlines(), dtype=float)
 
     lpd_clk_target_a = np.array(open(
-        'unit_tests/lpd/data/clk_target_a.csv', encoding='utf-8').readlines(), dtype=float)
+        './unit_tests/lpd/data/clk_target_a.csv', encoding='utf-8').readlines(), dtype=float)
 
     lpd_clk_target_b = np.array(open(
-        'unit_tests/lpd/data/clk_target_b.csv', encoding='utf-8').readlines(), dtype=float)
+        './unit_tests/lpd/data/clk_target_b.csv', encoding='utf-8').readlines(), dtype=float)
 
     dut.start(input_array_a=lpd_clk_ref, input_array_b=lpd_clk_ref)
 
@@ -74,7 +74,7 @@ def test_equal_input():
 
     acc_b = (1-mismatch_count_b/len(out_b))*100
 
-    plot_mode = settings.lpd['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.add_signal(time_array, lpd_clk_ref,
                          'Test 1: LPD Input A', plot_type=plot_mode)
@@ -94,7 +94,7 @@ def test_equal_input():
         f'\nLPD Test 1: Same CLK Input - Accuracy A: {acc_a} Accuracy B: {acc_b}')
 
     assert acc_a > 97
-    assert acc_b > 9
+    assert acc_b > 97
 
 
 def test_show():
@@ -106,7 +106,7 @@ def test_show():
 
     The generated results can be saved as an HTML file or displayed locally.
     """
-    plot_mode = settings.lpd['plot_mode']
+    plot_mode = settings.global_plot_mode
     if plot_mode in ('local', 'web'):
         scope.show(plot_type=plot_mode,
-                   save_path=f'unit_tests/lpd/lpd_unit_test_results.{"html" if plot_mode == "web" else ""}')
+                   save_path=f'./unit_tests/lpd/lpd_unit_test_results.{"html" if plot_mode == "web" else ""}')
