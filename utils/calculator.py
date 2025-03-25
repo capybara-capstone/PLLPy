@@ -32,7 +32,9 @@ class Calculator:
         :return: Tuple containing jitter and standard deviation of jitter.
         """
         if start_time is not None and stop_time is not None:
-            input_array = input_array[start_time:stop_time]
+            start_sample = round(start_time / self.settings.time_step)
+            stop_sample = round(stop_time / self.settings.time_step)
+            input_array = input_array[start_sample:stop_sample]
         total_time = 0
         cross_zero = []
         last_cross = 0
@@ -57,7 +59,7 @@ class Calculator:
         if plot:
             scope.add_signal(np.arange(0, len(input_array)*self.settings.time_step, self.settings.time_step), input_array,
                              name='Input', x_label='Time', y_label='Voltage', plot_type=self.settings.global_plot_mode)
-            scope.add_signal(phase_noise_freq, 10*np.log(abs(phase_noise)),
+            scope.add_signal(phase_noise_freq, 10*np.log(abs(np.round(phase_noise,3))),
                              'Phase Noise', 'Frequency Offset (Hz)', 'Phase Noise (dB)', self.settings.global_plot_mode)
 
             scope.show(plot_type=self.settings.global_plot_mode)

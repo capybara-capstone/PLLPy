@@ -13,7 +13,7 @@ class Settings:
                  vdd: int = 1,
                  vss: int = 0,
                  time_step: int = 1e-11,
-                 sim_time: int = 6e-6):
+                 sim_time: int = 24e-6):
         self.name = name
         self.sample_count = int(floor(sim_time/time_step))
         self.global_plot_mode = 'local'  # local web None
@@ -23,7 +23,7 @@ class Settings:
         self.sim_time = sim_time
         self.log = {'log_path': os.path.join(os.getcwd(), 'logs')}
         self.clk = {'k_vco': 1.2566e8,
-                    'fo': 1e7,
+                    'fo': 0,
                     'plot_mode': self.global_plot_mode
                     }
         self.vco = {'k_vco': 6.2832e9,
@@ -38,8 +38,8 @@ class Settings:
         self.lf = {'pull_up': 25e-6,
                    'pull_down': 25e-6,
                    'C': 16e-12,
-                   'C2': None,
-                   'R': None,
+                   'C2': 1.6e-12,
+                   'R': 8400,
                    'id': 0,
                    'plot_mode': self.global_plot_mode
                    }
