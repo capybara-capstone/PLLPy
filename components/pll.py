@@ -25,7 +25,7 @@ from components.lf import LoopFilter
 from components.divider import Divider
 from utils.scope import Scope
 from utils.logger import setup_log, save_io
-
+from utils.formatter import get_freq_format, get_time_format, get_volts_format
 
 # pylint: disable=W0212
 
@@ -64,7 +64,10 @@ class Pll:
             name=str(__name__).replace('.', '_'), id=self.id, settings=settings)
 
     def start_cdr(self, data):
-
+        """Starts clock and data recovery mode for PLL"""
+        progress_bar = tqdm(total=self.settings.sample_count,
+                            desc='Recovering CLK',
+                            position=0)
         clk = Vco(settings=self.settings, clk=True)
         lpd = Lpd(settings=self.settings)
         lf = LoopFilter(settings=self.settings)
@@ -76,14 +79,30 @@ class Pll:
 
         lf_out = 0
         div_out = 0
-        for _ in range(self.settings.sample_count):
-            lpd_out_a, lpd_out_b = lpd._process_and_monitor(data[_], div_out)
+        for sample in data:
+            lpd_out_a, lpd_out_b = lpd._process_and_monitor(sample, div_out)
             lf_out = lf._process(lpd_out_a, lpd_out_b)
             vco_out = vco._process_and_monitor(lf_out)
             div_out = div._process_and_monitor(vco_out)
 
             self.output.append(vco_out)
+            progress_bar.update(1)
+
+        self.time_array = np.arange(
+            0, self.settings.time_step*len(self.output), self.settings.time_step)
         print('Recovered Clock')
+
+        save_io(io_arrays=[np.arange(0, self.settings.time_step*len(self.output),
+                                     self.settings.time_step),
+                           data,
+                           div.io['output'],
+                           lpd.io['output_a'],
+                           lpd.io['output_b'],
+                           lf.io['output'],
+                           vco.io['output']],
+                headers=['Time', 'Data', 'Divider Output', 'LPD Output A',
+                         'LPD Output B', 'Loop Filter Output', 'VCO Output'],
+                io_file=self.io_file)
 
     def start_and_monitor(self):
         """Starts the PLL simulation and monitors the progress.
@@ -247,6 +266,9 @@ class Pll:
                 input_f.step(self.time_array, [*self.components['clk'].io['output']],
                              line_width=2,
                              mode='center')
+
+                input_f.xaxis.formatter = get_time_format()
+                input_f.yaxis.formatter = get_volts_format()
             else:
                 input_f = figure(title='Data Input', x_axis_label='Seconds', y_axis_label='Volts',
                                  width=800, height=200, sizing_mode='scale_both')
@@ -262,12 +284,17 @@ class Pll:
                        line_width=2,
                        mode='center')
 
+            div_f.xaxis.formatter = get_time_format()
+            div_f.yaxis.formatter = get_volts_format()
+
             lpd_a_f = figure(title='LPD Output A', x_axis_label='Seconds', y_axis_label='Volts',
                              width=800, height=200, sizing_mode='scale_both')
 
             lpd_a_f.step(self.time_array, [*self.components['lpd'].io['output_a']],
                          line_width=2,
                          mode='center')
+            lpd_a_f.xaxis.formatter = get_time_format()
+            lpd_a_f.yaxis.formatter = get_volts_format()
 
             lpd_b_f = figure(title='LPD Output B', x_axis_label='Seconds', y_axis_label='Volts',
                              width=800, height=200, sizing_mode='scale_both')
@@ -275,12 +302,16 @@ class Pll:
             lpd_b_f.step(self.time_array, [*self.components['lpd'].io['output_b']],
                          line_width=2,
                          mode='center')
+            lpd_b_f.xaxis.formatter = get_time_format()
+            lpd_b_f.yaxis.formatter = get_volts_format()
 
             lf_f = figure(title='Loop Filter Output', x_axis_label='Seconds', y_axis_label='Volts',
                           width=800, height=200, sizing_mode='scale_both')
 
             lf_f.line(self.time_array, [*self.components['lf'].io['output']],
                       line_width=2)
+            lf_f.xaxis.formatter = get_time_format()
+            lf_f.yaxis.formatter = get_volts_format()
 
             vco_f = figure(title='VCO Output', x_axis_label='Seconds', y_axis_label='Volts',
                            width=800, height=200, sizing_mode='scale_both')
@@ -288,6 +319,8 @@ class Pll:
             vco_f.step(self.time_array, [*self.components['vco'].io['output']],
                        line_width=2,
                        mode='center')
+            vco_f.xaxis.formatter = get_time_format()
+            vco_f.yaxis.formatter = get_volts_format()
 
             show(gridplot([[input_f],
                           [div_f],
