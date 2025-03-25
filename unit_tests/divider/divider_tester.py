@@ -67,7 +67,7 @@ def test_n_60():
 
     dut.start(input_array=div_ref)
 
-    out = dut.io['output']
+    out = np.array(dut.io['output'])
 
     mse_out = mse(data_1=div_target, data_2=out)
     cc = cross_correlation(data_1=div_target, data_2=out, mode='valid')

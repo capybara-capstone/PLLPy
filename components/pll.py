@@ -17,7 +17,7 @@ from collections import deque
 from matplotlib import pyplot as plt
 import numpy as np
 from tqdm import tqdm
-from bokeh.plotting import figure, show
+from bokeh.plotting import figure, show, output_file, save
 from bokeh.layouts import gridplot
 from components.lpd import Lpd
 from components.vco import Vco
@@ -25,7 +25,7 @@ from components.lf import LoopFilter
 from components.divider import Divider
 from utils.scope import Scope
 from utils.logger import setup_log, save_io
-from utils.formatter import get_freq_format, get_time_format, get_volts_format
+from utils.formatter import get_time_format, get_volts_format
 
 # pylint: disable=W0212
 
@@ -54,14 +54,23 @@ class Pll:
         :param scope_fit: Determines the fitting behavior for the Scope.
         """
         self.settings = settings
-        self.components = {}
+        self.components = {'clk': None,
+                           'lpd': None,
+                           'lf': None, 'vco': None,
+                           'div': None}
         self.scope = Scope(fit=scope_fit)
         self.output = deque([], maxlen=settings.sample_count)
         self.time_array = np.arange(0, settings.sim_time, settings.time_step)
         self.id = settings.pll['id']
-        settings.lf['id'] += 1
+        self.log = None
+        self.io_file = None
+
+    def update_logger(self):
+        """Updates logger"""
+        self.settings.pll['id'] += 1
+        self.id = self.settings.pll['id']
         self.log, self.io_file = setup_log(
-            name=str(__name__).replace('.', '_'), id=self.id, settings=settings)
+            name=str(__name__).replace('.', '_'), id=self.id, settings=self.settings)
 
     def start_cdr(self, data):
         """Starts clock and data recovery mode for PLL"""
@@ -126,6 +135,7 @@ class Pll:
 
         :raises ValueError: If the simulation does not complete successfully.
         """
+        self.update_logger()
         progress_bar = tqdm(total=self.settings.sample_count,
                             desc='LOCKING PLL',
                             position=0)
@@ -256,6 +266,7 @@ class Pll:
             axes[5].set_title(f'VCO Output - {self.settings.vco}', loc='left')
             axes[5].grid(True)
             plt.tight_layout()
+            plt.savefig(self.io_file[:-3]+"png", dpi=300, bbox_inches='tight')
             plt.show()
 
         elif plot_type == 'web':
@@ -321,13 +332,16 @@ class Pll:
                        mode='center')
             vco_f.xaxis.formatter = get_time_format()
             vco_f.yaxis.formatter = get_volts_format()
+            layout = gridplot([[input_f],
+                               [div_f],
+                               [lpd_a_f],
+                               [lpd_b_f],
+                               [lf_f],
+                               [vco_f]], sizing_mode='scale_both')
 
-            show(gridplot([[input_f],
-                          [div_f],
-                          [lpd_a_f],
-                          [lpd_b_f],
-                          [lf_f],
-                          [vco_f]], sizing_mode='scale_both'))
+            output_file(filename=self.io_file[:-3]+"html")
+            save(layout)
+            show(layout)
 
     def save_to_file(self, path):
 

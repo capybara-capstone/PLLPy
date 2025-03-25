@@ -6,9 +6,10 @@ import os
 import logging
 from time import gmtime, strftime
 import numpy as np
+# pylint: disable=W1203 disable=W0622
 
 
-def setup_log(name: str, id: int, settings) -> logging:
+def setup_log(name: str, id: int, settings, csv: bool = True) -> logging:
     """
     Creates and configures a logger instance.
 
@@ -28,11 +29,13 @@ def setup_log(name: str, id: int, settings) -> logging:
     log.addHandler(logging.FileHandler(filename=file_full, mode='a'))
     log.info(
         f'{"="*10} {strftime("%Y-%m-%d_%H:%M:%S", gmtime())}_{__name__}_{id} {"="*10}')
-    log.info(f'Settings {settings.vco}')
+    log.info(
+        f'Settings VCO: {settings.vco}\nLoopFitler: {settings.lf}\nCLK: {settings.clk}\nDivider: {settings.divider}\nLPD: {settings.lpd}')
 
-    file_full = file_full[:-3] + "csv"
-    if not os.path.isfile(file_full):
-        open(file_full, 'w', encoding='utf-8')
+    if csv:
+        file_full = file_full[:-3] + "csv"
+        if not os.path.isfile(file_full):
+            open(file_full, 'w', encoding='utf-8')
 
     return log, file_full
 
