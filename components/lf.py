@@ -69,54 +69,57 @@ class LoopFilter:
             - `output_value` (float): The output value of the filter.
             - `io` (dict): Dictionary for storing input/output signals.
         """
+        self.settings = settings
         self.io = {
             'input_a': deque([], maxlen=settings.sample_count),
             'input_b': deque([], maxlen=settings.sample_count),
             'output': deque([], maxlen=settings.sample_count)
         }
+
         self.time_step: float = float(settings.time_step)
         self.sample_count: int = settings.sample_count
         self.r: float = float(
             settings.lf['R']) if settings.lf['R'] is not None else None
         self.c: float = float(settings.lf['C'])
+        self.c2: float = float(
+            settings.lf['C2']) if settings.lf['C2'] is not None else None
         self.pull_up: float = float(settings.lf['pull_up'])
         self.pull_down: float = -1 * float(settings.lf['pull_down'])
 
-        self.last: list = [0, 0]
+        self.last_inputs: list = [0.0, 0.0]
+        self.last_outputs: list = [0.0, 0.0]
         self.output_value: int = 0
 
         if self.r is None:
             self.alpha: float = 1.0
             self.beta: float = self.time_step / self.c
         else:
-            self.alpha: float = np.exp(-self.time_step / (self.r * self.c))
-            self.beta: float = 1.0 - self.alpha
+            if self.c2 is None:
+                self.alpha: float = np.exp(-self.time_step / (self.r * self.c))
+                self.beta: float = 1.0 - self.alpha
+            else:
+                rc = self.r*self.c
+                rcc2 = self.r*self.c*self.c2
+                cc2 = self.c+self.c2
+                k = 2.0/self.time_step
+                self.b0 = rc * k + 1
+                self.b1 = -rc * k + 1
+                self.b2 = 0
 
-    def _process_and_monitor(self, current_sample_a: float, current_sample_b: float) -> float:
-        """
-        Process and monitor the input signals, returning the filtered output value.
+                self.a0 = rcc2 * k**2 + cc2 * k
+                self.a1 = -2 * rcc2 * k**2
+                self.a2 = rcc2 * k**2 - cc2 * k
 
-        This method calculates the output of the phase loop filter based on the current input
-        samples (`current_sample_a` and `current_sample_b`). The current difference is filtered 
-        using the alpha and beta coefficients. It also stores the input and output values in the 
-        `io` dictionary for monitoring purposes.
+    def reset_io(self):
+        self.io = {
+            'input_a': deque([], maxlen=self.sample_count),
+            'input_b': deque([], maxlen=self.sample_count),
+            'output': deque([], maxlen=self.sample_count)
+        }
 
-        :param current_sample_a: The current input signal `a` to be processed.
-        :param current_sample_b: The current input signal `b` to be processed.
-
-        :return: The filtered output value based on the input samples.
-
-        **Returns**:
-            - float: The filtered output value after applying the phase loop filter.
-        """
-        up_current = current_sample_a * self.pull_up
-        down_current = current_sample_b * self.pull_down
-        net_current = up_current + down_current
-        self.output_value = self.alpha * self.output_value + self.beta * net_current
-        self.last = [current_sample_a, current_sample_b]
-
-        self.io['output'].append(self.output_value)
-        return self.output_value
+    def update_settings(self, settings):
+        """Update Settings"""
+        self.settings = settings
 
     def _process(self, input_a: float, input_b: float) -> float:
         """
@@ -137,8 +140,18 @@ class LoopFilter:
         up_current = input_a * self.pull_up
         down_current = input_b * self.pull_down
         net_current = up_current + down_current
-        self.output_value = self.alpha * self.output_value + self.beta * net_current
-        self.last = [input_a, input_b]
+
+        if self.c2 is None:
+            self.output_value = self.alpha * self.output_value + self.beta * net_current
+        else:
+            self.output_value = (self.b0 * net_current +
+                                 self.b1 * self.last_inputs[0] +
+                                 self.b2 * self.last_inputs[1] -
+                                 self.a1 * self.last_outputs[0] -
+                                 self.a2 * self.last_outputs[1]) / self.a0
+            self.last_inputs = [net_current, self.last_inputs[0]]
+            self.last_outputs = [self.output_value, self.last_outputs[0]]
+        self.io['output'].append(self.output_value)
         return self.output_value
 
     def start(self, input_array_a: list[float], input_array_b: list[float]):
@@ -154,16 +167,12 @@ class LoopFilter:
         **Returns**:
             - None
         """
-        n_samples = self.sample_count
-        output = np.empty(n_samples, dtype=np.float64)
-        net_current = input_array_a * self.pull_up + input_array_b * self.pull_down
-        output[0] = self.alpha * self.output_value + self.beta * net_current[0]
-        if n_samples > 1:
-            for i in range(1, n_samples):
-                output[i] = self.alpha * output[i-1] + \
-                    self.beta * net_current[i]
-
-        self.io['output'] = output
+        self.io['input_a'] = np.array(input_array_a)
+        self.io['input_b'] = np.array(input_array_b)
+        for index, __ in enumerate(range(self.sample_count)):
+            self._process(
+                input_a=input_array_a[index], input_b=input_array_b[index])
+        self.io['output'] = np.array(self.io['output'])
 
     def unit_test(self):
         """
