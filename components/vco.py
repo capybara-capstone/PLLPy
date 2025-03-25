@@ -96,9 +96,9 @@ class Vco:
         self.add_noise_flag: int = 0
 
         self.low_freq_noise: float = 0
-        self.filter_numerator: float = [2*pi]
-        self.filter_denominator: float = [1, -1]
-        self.filter_conditions: float = [0, 0] #signal.lfilter_zi(self.filter_numerator, 
+        self.filter_numerator: float = [1]
+        self.filter_denominator: float = [1, 1]
+        self.filter_conditions: float = [0] #signal.lfilter_zi(self.filter_numerator, 
                                             #self.filter_denominator)
 
 
@@ -127,6 +127,7 @@ class Vco:
         
         if self.last_output != out:
             self.add_white_noise(input_a)
+            self.add_low_freq_noise(input_a)
 
         self.last_output = out
         self.io['input'].append(input_a)
@@ -154,6 +155,7 @@ class Vco:
 
         if self.last_output != out:
             self.add_white_noise(input_a)
+            self.add_low_freq_noise(input_a)
 
 
         self.last_output = out
@@ -195,7 +197,7 @@ class Vco:
         """
         if self.h0 != 0:
             target_frequency = (self.k_vco*input_a) + self.fo
-            random_number = gauss(0, self.h0/2)
+            random_number = gauss(0, sqrt(self.h0/2))
             self.white_noise = random_number * sqrt(target_frequency)
 
 
@@ -210,10 +212,10 @@ class Vco:
         """
         if self.n1 != 0:
             target_frequency = (self.k_vco*input_a) + self.fo
-            random_number = gauss(0, self.n1/2)
+            random_number = gauss(0, sqrt(self.n1/2))
             pre_filter_noise = [self.low_freq_noise, random_number * sqrt(target_frequency)]
-            result, self.filter_conditions = signal.lfilter(self.numerator, self.denominator, 
-                                                zi = self.filter_conditions)
+            result, self.filter_conditions = signal.lfilter(self.filter_numerator, 
+                        self.filter_denominator, pre_filter_noise, zi = self.filter_conditions)
             self.low_freq_noise = result[1]
 
 
