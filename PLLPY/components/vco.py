@@ -147,7 +147,7 @@ class Vco:
         cos_values = np.cos(phase_values)
         self.io['output'] = self.vss + (self.vdd - self.vss) * (cos_values < 0)
 
-    def unit_test(self, test_path=None):
+    def unit_test(self, test_path):
         """
         Unit test for the VCO class.
 
@@ -160,8 +160,6 @@ class Vco:
             - None
         """
         print("Testing VCO")
-        if test_path is None:
-            test_path = "unit_tests/vco/vco_tester.py"
         if os.path.isfile(path=test_path):
             return pytest.main(["-s", "--durations=0", test_path])
         return f'File {test_path} does not exist'

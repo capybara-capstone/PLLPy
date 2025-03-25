@@ -167,7 +167,7 @@ class LoopFilter:
                 input_a=input_array_a[index], input_b=input_array_b[index])
         self.io['output'] = np.array(self.io['output'])
 
-    def unit_test(self, test_path=None):
+    def unit_test(self, test_path):
         """
         Unit test for modules.
 
@@ -180,8 +180,6 @@ class LoopFilter:
             - None
         """
         print("Testing LoopFilter")
-        if test_path is None:
-            test_path = "unit_tests/lf/lf_tester.py"
         if os.path.isfile(path=test_path):
             return pytest.main(["-s", "--durations=0", test_path])
         return f'File {test_path} does not exist'

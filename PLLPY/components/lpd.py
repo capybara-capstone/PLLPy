@@ -173,7 +173,7 @@ class Lpd:
             self.io['output_a'].append(out_a)
             self.io['output_b'].append(out_b)
 
-    def unit_test(self,  test_path=None) -> None:
+    def unit_test(self,  test_path):
         """
         Unit test for modules.
 
@@ -184,8 +184,6 @@ class Lpd:
             - None
         """
         print("Testing LPD")
-        if test_path is None:
-            test_path = "unit_tests/lpd/lpd_tester.py"
         if os.path.isfile(path=test_path):
             return pytest.main(["-s", "--durations=0", test_path])
         return f'File {test_path} does not exist'

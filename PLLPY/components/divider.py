@@ -204,7 +204,7 @@ class Divider:
         for sample in input_array:
             self.io['output'].append(self._process(current_sample=sample))
 
-    def unit_test(self,  test_path=None):
+    def unit_test(self,  test_path):
         """
         Unit test for the Divider class.
 
@@ -214,8 +214,6 @@ class Divider:
         :return: None
         """
         print("Testing Divider")
-        if test_path is None:
-            test_path = "unit_tests/div/div_tester.py"
         if os.path.isfile(path=test_path):
             return pytest.main(["-s", "--durations=0", test_path])
         return f'File {test_path} does not exist'
