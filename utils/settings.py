@@ -10,18 +10,19 @@ class Settings:
 
     def __init__(self,
                  name: str,
+                 log_path:str,
                  vdd: int = 1,
                  vss: int = 0,
                  time_step: int = 1e-11,
                  sim_time: int = 6e-6):
         self.name = name
         self.sample_count = int(floor(sim_time/time_step))
-        self.global_plot_mode = 'web'  # local web None
+        self.global_plot_mode = 'None'  # local web None
         self.vdd = vdd
         self.vss = vss
         self.time_step = time_step
         self.sim_time = sim_time
-        self.log = {'log_path': os.path.join(os.getcwd(), 'logs')}
+        self.log = {'log_path': log_path}
         self.clk = {'k_vco': 1.2566e8,
                     'fo': 1e7,
                     'plot_mode': self.global_plot_mode

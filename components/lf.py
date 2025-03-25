@@ -110,13 +110,6 @@ class LoopFilter:
                 self.a1 = -2 * rcc2 * k**2
                 self.a2 = rcc2 * k**2 - cc2 * k
 
-    def reset_io(self):
-        self.io = {
-            'input_a': deque([], maxlen=self.sample_count),
-            'input_b': deque([], maxlen=self.sample_count),
-            'output': deque([], maxlen=self.sample_count)
-        }
-
     def update_settings(self, settings):
         """Update Settings"""
         self.settings = settings

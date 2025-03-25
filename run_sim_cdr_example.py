@@ -4,7 +4,7 @@ from utils.settings import Settings
 import serdespy as sdp
 import numpy as np
 
-settings = Settings(name='CDR_example')
+settings = Settings(name='CDR_example', log_path='./logs')
 pll = Pll(settings=settings)
 
 # set up paramaters

@@ -1,5 +1,5 @@
 """Setup Run"""
-import sys
+import os
 from components.pll import Pll
 from components.vco import Vco
 from components.lpd import Lpd
@@ -7,7 +7,8 @@ from components.lf import LoopFilter
 from components.divider import Divider
 from utils.settings import Settings
 
-settings = Settings(name='setup_settings')
+os.makedirs('./logs', exist_ok=True)
+settings = Settings(name='setup_settings', log_path='./logs')
 
 
 vco = Vco(settings=settings)
