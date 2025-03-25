@@ -56,11 +56,14 @@ class Calculator:
         jitter = np.sqrt(np.mean(np.square(jitter_sequence)))
         std_dev = np.mean(np.absolute(jitter_sequence))
 
+        bin_size = phase_noise_freq[1] - phase_noise_freq[0]
+        phase_noise = np.divide(phase_noise, bin_size)
+
         if plot:
             scope.add_signal(np.arange(0, len(input_array)*self.settings.time_step, self.settings.time_step), input_array,
                              name='Input', x_label='Time', y_label='Voltage', plot_type=self.settings.global_plot_mode)
-            scope.add_signal(phase_noise_freq, 10*np.log(abs(np.round(phase_noise,3))),
-                             'Phase Noise', 'Frequency Offset (Hz)', 'Phase Noise (dB)', self.settings.global_plot_mode)
+            scope.add_signal(phase_noise_freq, 10*np.log(abs(np.round(phase_noise,15))),
+                             'Phase Noise', 'Frequency Offset (Hz)', 'Phase Noise (dB/Hz)', self.settings.global_plot_mode)
 
             scope.show(plot_type=self.settings.global_plot_mode)
 
