@@ -1,7 +1,7 @@
-from PLLPY.utils.settings import Settings
-from PLLPY.components.pll import Pll
-from PLLPY.utils.sweeper import Sweeper
-from PLLPY.utils.calculator import Calculator
+from pll_py.utils.settings import Settings
+from pll_py.components.pll import Pll
+from pll_py.utils.sweeper import Sweeper
+from pll_py.utils.calculator import Calculator
 import numpy as np
 
 settings = Settings(name='pll_example')

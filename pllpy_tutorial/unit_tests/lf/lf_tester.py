@@ -18,10 +18,10 @@ Test Methods:
 """
 
 import numpy as np
-from PLLPY.components.lf import LoopFilter
-from PLLPY.utils.settings import Settings
-from PLLPY.utils.comparators import mse, cross_correlation
-from PLLPY.utils.scope import Scope
+from pll_py.components.lf import LoopFilter
+from pll_py.utils.settings import Settings
+from pll_py.utils.comparators import mse, cross_correlation
+from pll_py.utils.scope import Scope
 # pylint: disable=C0301
 
 settings = Settings(name='LF_Tester')

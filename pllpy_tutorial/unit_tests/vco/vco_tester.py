@@ -13,10 +13,10 @@ Tests:
 """
 
 import numpy as np
-from PLLPY.components.vco import Vco
-from PLLPY.utils.settings import Settings
-from PLLPY.utils.comparators import mse
-from PLLPY.utils.scope import Scope
+from pll_py.components.vco import Vco
+from pll_py.utils.settings import Settings
+from pll_py.utils.comparators import mse
+from pll_py.utils.scope import Scope
 # pylint: disable=C0301
 
 settings = Settings(name='VCO_Tester')

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='PLLPY',
+    name='pll_py',
     version='0.0.1',
     packages=find_packages(),
     install_requires=['bokeh == 3.6.3',
@@ -26,17 +26,20 @@ setup(
                       'pytz == 2025.1',
                       'PyYAML == 6.0.2',
                       'requests == 2.32.3',
+                      'setuptools == 65.5.0',
                       'six == 1.17.0',
                       'serdespy == 1.0',
                       'tomli == 2.2.1',
                       'tornado == 6.4.2',
                       'tqdm == 4.67.1',
+                      'twine == 6.1.0',
                       'tzdata == 2025.1',
+                      ' wheel == 0.45.1',
                       'xyzservices == 2025.1.0'
                       ],
     entry_points={
         'console_scripts': [
-            'pllpy_tutorial=PLLPY.utils.tutorial:install_tutorial',
+            'pllpy_tutorial=pll_py.utils.tutorial:install_tutorial',
         ],
     },
 
