@@ -33,4 +33,10 @@ setup(
                       'tzdata == 2025.1',
                       'xyzservices == 2025.1.0'
                       ],
+    entry_points={
+        'console_scripts': [
+            'pllpy_tutorial=PLLPY.utils.tutorial:install_tutorial',
+        ],
+    },
+
 )

@@ -5,3 +5,4 @@ from .logger import setup_log, save_io
 from .scope import Scope
 from .settings import Settings
 from .sweeper import Sweeper
+from .tutorial import install_tutorial
