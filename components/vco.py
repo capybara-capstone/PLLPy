@@ -12,6 +12,7 @@ from math import pi, cos, sqrt
 import pytest
 import numpy as np
 from random import gauss
+from scipy import signal
 # pylint: disable=W1203
 
 
@@ -94,6 +95,13 @@ class Vco:
         self.white_noise: float = float(0)
         self.add_noise_flag: int = 0
 
+        self.low_freq_noise: float = 0
+        self.filter_numerator: float = [2*pi]
+        self.filter_denominator: float = [1, -1]
+        self.filter_conditions: float = [0, 0] #signal.lfilter_zi(self.filter_numerator, 
+                                            #self.filter_denominator)
+
+
         
 
 
@@ -114,7 +122,7 @@ class Vco:
             - float: The output value of the VCO after processing the input.
         """
         self.last += (input_a * self.k_vco_time + self.angular_time)
-        sin_out = cos(self.last + self.white_noise)
+        sin_out = cos(self.last + self.white_noise + self.low_freq_noise)
         out = self.vss + (self.vdd - self.vss) * (sin_out < 0)
         
         if self.last_output != out:
@@ -141,13 +149,13 @@ class Vco:
             - float: The output value of the VCO after processing the input.
         """
         self.last += (input_a * self.k_vco_time + self.angular_time)
-        sin_out = cos(self.last + self.white_noise)
-        
+        sin_out = cos(self.last + self.white_noise + self.low_freq_noise)
+        out = self.vss + (self.vdd - self.vss) * (sin_out < 0)
+
         if self.last_output != out:
             self.add_white_noise(input_a)
 
 
-        out = self.vss + (self.vdd - self.vss) * (sin_out < 0)
         self.last_output = out
 
         return out
@@ -185,10 +193,28 @@ class Vco:
         **Returns**:
             - float
         """
-        target_frequency = (self.k_vco*input_a) + self.fo
-        random_number = gauss(0, self.h0/2)
-        self.white_noise = random_number * sqrt(target_frequency)
+        if self.h0 != 0:
+            target_frequency = (self.k_vco*input_a) + self.fo
+            random_number = gauss(0, self.h0/2)
+            self.white_noise = random_number * sqrt(target_frequency)
 
+
+    def add_low_freq_noise(self, input_a):
+        """
+        This function adds white noise to the output. Inputs are setup in the settings.py file.
+
+        :return: a value to be added to the integral by the VCO
+
+        **Returns**:
+            - float
+        """
+        if self.n1 != 0:
+            target_frequency = (self.k_vco*input_a) + self.fo
+            random_number = gauss(0, self.n1/2)
+            pre_filter_noise = [self.low_freq_noise, random_number * sqrt(target_frequency)]
+            result, self.filter_conditions = signal.lfilter(self.numerator, self.denominator, 
+                                                zi = self.filter_conditions)
+            self.low_freq_noise = result[1]
 
 
 
