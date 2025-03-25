@@ -25,7 +25,7 @@ setup(
                       'python-dateutil == 2.9.0.post0',
                       'pytz == 2025.1',
                       'PyYAML == 6.0.2',
-                      'requests == 2.32.3'
+                      'requests == 2.32.3',
                       'six == 1.17.0',
                       'serdespy == 1.0',
                       'tomli == 2.2.1',
