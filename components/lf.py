@@ -81,6 +81,8 @@ class LoopFilter:
         self.c: float = float(settings.lf['C'])
         self.pull_up: float = float(settings.lf['pull_up'])
         self.pull_down: float = -1 * float(settings.lf['pull_down'])
+        self.saturation_high: float = float(settings.lf['sat_high'])
+        self.saturation_low: float = float(settings.lf['sat_low'])
 
         self.last: list = [0, 0]
         self.output_value: int = 0
@@ -112,9 +114,17 @@ class LoopFilter:
         up_current = current_sample_a * self.pull_up
         down_current = current_sample_b * self.pull_down
         net_current = up_current + down_current
-        self.output_value = self.alpha * self.output_value + self.beta * net_current
+        
+        if ((self.alpha * self.output_value + self.beta * net_current) > self.saturation_high):
+            self.output_value = self.saturation_high
+            
+        elif ((self.alpha * self.output_value + self.beta * net_current) < self.saturation_low):
+            self.output_value = self.saturation_low
+        
+        else:
+            self.output_value = self.alpha * self.output_value + self.beta * net_current
+            
         self.last = [current_sample_a, current_sample_b]
-
         self.io['output'].append(self.output_value)
         return self.output_value
 

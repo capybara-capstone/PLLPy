@@ -33,6 +33,8 @@ class Settings:
                    'pull_down': 25e-6,
                    'R': None,
                    'C': 16e-12,
+                   'sat_high': 2,
+                   'sat_low': 0.5,
                    'plot_mode': self.global_plot_mode
                    }
         self.pll = {

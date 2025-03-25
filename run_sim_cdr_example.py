@@ -40,5 +40,7 @@ pll.show(plot_type='web', sim_type='CDR', input=data_in[:settings.sample_count])
  
 # compare retimed data with input datastream to get BER
 err = sdp.prbs_checker(13, data[:len(retimed_data)-1], np.array(retimed_data))
-print("Bit Error Ratio = ", err[0]/(retimed_data.size))
+
+if (isinstance(err, bool) == False):
+    print("Bit Error Ratio = ", err[0]/(retimed_data.size))
             
