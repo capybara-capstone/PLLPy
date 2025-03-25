@@ -34,7 +34,7 @@ setup(
                       'tqdm == 4.67.1',
                       'twine == 6.1.0',
                       'tzdata == 2025.1',
-                      ' wheel == 0.45.1',
+                      'wheel == 0.45.1',
                       'xyzservices == 2025.1.0'
                       ],
     entry_points={
