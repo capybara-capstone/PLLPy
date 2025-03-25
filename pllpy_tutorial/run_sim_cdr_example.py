@@ -6,8 +6,7 @@ import numpy as np
 
 settings = Settings(name='CDR_example')
 pll = Pll(settings=settings)
-settings.update_from_file(setting_file_path='./unit_tests/ut_sett.json')
-print(settings.get_settings())
+settings.update_from_file(setting_file_path='./pllpy_tutorial/unit_tests/ut_sett.json')
 # set up paramaters
 nyquist_f = 2e7
 samples_per_symbol = 64
@@ -37,7 +36,7 @@ for i in range(len(rising_edge)):
 
 print(len(pll.settings.time_array))
 
-pll.show(plot_type='web',
+pll.show(plot_type='local',
          sim_type='CDR',
          input=data_in[:len(pll.settings.time_array)])
 
