@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pllpython',
-    version='0.0.4',
+    version='0.0.7',
     packages=find_packages(),
     install_requires=['bokeh == 3.6.3',
                       'cmake == 3.31.6',
@@ -28,6 +28,7 @@ setup(
                       'requests == 2.32.3',
                       'setuptools == 65.5.0',
                       'six == 1.17.0',
+                      'scipy == 1.15.2',
                       'serdespy == 1.0',
                       'tomli == 2.2.1',
                       'tornado == 6.4.2',

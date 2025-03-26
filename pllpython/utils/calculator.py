@@ -59,10 +59,14 @@ class Calculator:
         bin_size = phase_noise_freq[1] - phase_noise_freq[0]
         phase_noise = np.divide(phase_noise, bin_size)
 
+        index_min = np.argmin(abs(phase_noise))
+        phase_noise[index_min] = phase_noise[index_min+1]
+
         if plot:
             scope.add_signal(np.arange(0, len(input_array)*self.settings.time_step, self.settings.time_step), input_array,
                              name='Input', x_label='Time', y_label='Voltage', plot_type=self.settings.global_plot_mode)
-            scope.add_signal(phase_noise_freq, 10*np.log(abs(np.round(phase_noise,15)), out=abs(np.round(phase_noise,15)), where=abs(np.round(phase_noise,15)) > 0),
+
+            scope.add_signal(phase_noise_freq, 10*np.log(abs(phase_noise), out=abs(phase_noise), where=abs(phase_noise) > 0),
                              'Phase Noise', 'Frequency Offset (Hz)', 'Phase Noise (dB/Hz)', self.settings.global_plot_mode)
 
             scope.show(plot_type=self.settings.global_plot_mode)
