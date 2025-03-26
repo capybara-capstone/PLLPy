@@ -39,7 +39,7 @@ setup(
                       ],
     entry_points={
         'console_scripts': [
-            'pllpython_tutorial=pll_py.utils.tutorial:install_tutorial',
+            'pllpython_tutorial=pllpython.utils.tutorial:install_tutorial',
         ],
     },
 
