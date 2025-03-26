@@ -6,9 +6,10 @@ import numpy as np
 
 settings = Settings(name='pll_example')
 settings.set_global_plot_mode(mode='local')
+settings.update_from_file(setting_file_path='./pllpython_tutorial/demo_settings.json')
 calc = Calculator(settings=settings)
 
-# PLL
+
 pll = Pll(settings=settings)
 pll.start_and_monitor()
 pll.show()
@@ -19,7 +20,7 @@ result = calc.calculate_jitter(
 pll.log.info('Jitter %s', result)
 print(f'Jitter: {result}')
 
-# Sweeper
+Sweeper
 settings.set_lf_parameter(parameter='C2', value=None)
 sweep = Sweeper(pll=pll, id=1)
 sweep.start(block='lf', parameter='R', values=[None, '8400', '6400'])
