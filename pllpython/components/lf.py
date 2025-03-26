@@ -155,6 +155,7 @@ class LoopFilter:
                     self.output_value = self.settings.lf['max_sat']
             self.last_outputs = [self.output_value, self.last_outputs[0]]
         self.io['output'].append(self.output_value)
+        return self.output_value
 
     def start(self, input_array_a: list[float], input_array_b: list[float]):
         """

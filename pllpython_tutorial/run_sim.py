@@ -6,7 +6,7 @@ import numpy as np
 
 settings = Settings(name='pll_example')
 settings.set_global_plot_mode(mode='local')
-settings.update_from_file(setting_file_path='./pllpython_tutorial/demo_settings.json')
+# settings.update_from_file(setting_file_path='./pllpython_tutorial/demo_settings.json')
 calc = Calculator(settings=settings)
 
 
