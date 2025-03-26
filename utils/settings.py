@@ -24,7 +24,7 @@ class Settings:
         self.log = {'log_path': os.path.join(os.getcwd(), 'logs')}
         self.clk = {'k_vco': 20e6,
                     'fo': 0,
-                    'white_phase_noise_spectral_density': 0,
+                    'white_phase_noise_spectral_density': 3E-10,
                     'low_frequency_phase_noise': 0,
                     'plot_mode': self.global_plot_mode
                     }
