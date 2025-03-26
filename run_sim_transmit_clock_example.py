@@ -14,7 +14,9 @@ from components.pll import Pll
 from utils.settings import Settings
 from utils.calculator import Calculator
 
-
+#please don't ask me about this
+import warnings
+warnings.filterwarnings("ignore")
 
 '''
 Simulate PLL using PLLPy
