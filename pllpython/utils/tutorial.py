@@ -8,10 +8,7 @@ GITHUB_ZIP_URL = "https://github.com/capybara-capstone/PLLPy/raw/refs/heads/dev_
 
 INSTALL_PATH = os.path.expanduser("./")
 
-if platform.system() == "Windows":
-    ZIP_PATH = os.path.join(os.environ.get(
-        "TEMP", tempfile.gettempdir()), "pllpython_tutorials.zip")
-elif platform.system() in ["Linux", "Darwin"]:  # Darwin = macOS
+if platform.system() in ["Linux", "Darwin"]:  # Darwin = macOS
     ZIP_PATH = os.path.join("/tmp", "pllpython_tutorials.zip")
 else:
     ZIP_PATH = os.path.join(tempfile.gettempdir(),

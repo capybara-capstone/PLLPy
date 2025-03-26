@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pllpython',
-    version='0.0.3',
+    version='0.0.4',
     packages=find_packages(),
     install_requires=['bokeh == 3.6.3',
                       'cmake == 3.31.6',
