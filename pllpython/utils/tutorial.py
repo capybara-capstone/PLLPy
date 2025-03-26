@@ -4,7 +4,7 @@ import zipfile
 import platform
 import tempfile
 
-GITHUB_ZIP_URL = "https://github.com/capybara-capstone/PLLPy/raw/refs/heads/dev_package/pllpython_tutorials.zip"
+GITHUB_ZIP_URL = "https://github.com/capybara-capstone/PLLPy/raw/refs/heads/merge_vco/pllpython_tutorials.zip"
 
 INSTALL_PATH = os.path.expanduser("./")
 
