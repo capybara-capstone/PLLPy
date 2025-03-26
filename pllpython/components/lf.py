@@ -136,6 +136,11 @@ class LoopFilter:
 
         if self.c2 is None:
             self.output_value = self.alpha * self.output_value + self.beta * net_current
+            if self.settings.lf['min_sat'] is not None and self.settings.lf['max_sat'] is not None:
+                if self.output_value < self.settings.lf['min_sat']:
+                    self.output_value = self.settings.lf['min_sat']
+                elif self.output_value > self.settings.lf['max_sat']:
+                    self.output_value = self.settings.lf['max_sat']
         else:
             self.output_value = (self.b0 * net_current +
                                  self.b1 * self.last_inputs[0] +
@@ -143,9 +148,13 @@ class LoopFilter:
                                  self.a1 * self.last_outputs[0] -
                                  self.a2 * self.last_outputs[1]) / self.a0
             self.last_inputs = [net_current, self.last_inputs[0]]
+            if self.settings.lf['min_sat'] is not None and self.settings.lf['max_sat'] is not None:
+                if self.output_value < self.settings.lf['min_sat']:
+                    self.output_value = self.settings.lf['min_sat']
+                elif self.output_value > self.settings.lf['max_sat']:
+                    self.output_value = self.settings.lf['max_sat']
             self.last_outputs = [self.output_value, self.last_outputs[0]]
         self.io['output'].append(self.output_value)
-        return self.output_value
 
     def start(self, input_array_a: list[float], input_array_b: list[float]):
         """
