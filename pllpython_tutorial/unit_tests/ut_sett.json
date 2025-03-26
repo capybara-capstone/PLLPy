@@ -5,11 +5,15 @@
     "sim_time": 4e-6,
     "clk": {
         "k_vco": 1.2566e8,
-        "fo": 1e7
+        "fo": 1e7,
+        "white_phase_noise_spectral_density": 0,
+        "low_frequency_phase_noise": 0
     },
     "vco": {
         "k_vco": 6.2832e9,
-        "fo": 1000e6
+        "fo": 1000e6,
+        "white_phase_noise_spectral_density": 0,
+        "low_frequency_phase_noise": 0
     },
     "divider": {
         "n": 60

@@ -26,12 +26,16 @@ class Settings:
         self.sim_time = sim_time
         self.time_array = np.arange(0, self.sim_time, self.time_step)
         self.log = {'log_path': log_path}
-        self.clk = {'k_vco': 1.2566e8,
+        self.clk = {'k_vco': 20e6,
                     'fo': 0,
+                    'white_phase_noise_spectral_density': 3E-10,
+                    'low_frequency_phase_noise': 0,
                     'plot_mode': self.global_plot_mode
                     }
-        self.vco = {'k_vco': 6.2832e9,
+        self.vco = {'k_vco': 1e9,
                     'fo': 1000e6,
+                    'white_phase_noise_spectral_density': 0,
+                    'low_frequency_phase_noise': 0,
                     'plot_mode': self.global_plot_mode,
                     'id': 0
                     }
