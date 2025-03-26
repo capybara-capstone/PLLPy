@@ -4,7 +4,6 @@ import zipfile
 
 GITHUB_ZIP_URL = "https://github.com/capybara-capstone/PLLPy/raw/refs/heads/dev_package/pllpython_tutorials.zip"
 
-
 INSTALL_PATH = os.path.expanduser("./")
 
 ZIP_PATH = "/tmp/tutorial.zip"
