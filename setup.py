@@ -1,0 +1,46 @@
+from setuptools import setup, find_packages
+
+setup(
+    name='pllpython',
+    version='0.0.4',
+    packages=find_packages(),
+    install_requires=['bokeh == 3.6.3',
+                      'cmake == 3.31.6',
+                      'contourpy == 1.3.1',
+                      'cycler == 0.12.1',
+                      'exceptiongroup == 1.2.2',
+                      'fonttools == 4.56.0',
+                      'iniconfig == 2.0.0',
+                      'Jinja2 == 3.1.6',
+                      'kiwisolver == 1.4.8',
+                      'MarkupSafe == 3.0.2',
+                      'matplotlib == 3.10.1',
+                      'numpy == 2.2.3',
+                      'packaging == 24.2',
+                      'pandas == 2.2.3',
+                      'pillow == 11.1.0',
+                      'pluggy == 1.5.0',
+                      'pyparsing == 3.2.1',
+                      'pytest == 8.3.4',
+                      'python-dateutil == 2.9.0.post0',
+                      'pytz == 2025.1',
+                      'PyYAML == 6.0.2',
+                      'requests == 2.32.3',
+                      'setuptools == 65.5.0',
+                      'six == 1.17.0',
+                      'serdespy == 1.0',
+                      'tomli == 2.2.1',
+                      'tornado == 6.4.2',
+                      'tqdm == 4.67.1',
+                      'twine == 6.1.0',
+                      'tzdata == 2025.1',
+                      'wheel == 0.45.1',
+                      'xyzservices == 2025.1.0'
+                      ],
+    entry_points={
+        'console_scripts': [
+            'pllpython_tutorial=pllpython.utils.tutorial:install_tutorial',
+        ],
+    },
+
+)
