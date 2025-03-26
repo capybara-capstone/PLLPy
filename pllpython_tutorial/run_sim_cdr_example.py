@@ -1,6 +1,6 @@
 """Sim """
-from pll_py.components.pll import Pll
-from pll_py.utils.settings import Settings
+from pllpython.components.pll import Pll
+from pllpython.utils.settings import Settings
 import serdespy as sdp
 import numpy as np
 

@@ -18,9 +18,9 @@ Test Methods:
 """
 
 import numpy as np
-from pll_py.components.lpd import Lpd
-from pll_py.utils.settings import Settings
-from pll_py.utils.scope import Scope
+from pllpython.components.lpd import Lpd
+from pllpythonhon.utils.settings import Settings
+from pllpythonhon.utils.scope import Scope
 # pylint: disable=C0301
 
 settings = Settings('LPD_Tester')

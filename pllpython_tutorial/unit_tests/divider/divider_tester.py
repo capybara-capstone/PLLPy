@@ -13,10 +13,10 @@ Test methods:
 """
 
 import numpy as np
-from pll_py.components.divider import Divider
-from pll_py.utils.settings import Settings
-from pll_py.utils.comparators import mse, cross_correlation
-from pll_py.utils.scope import Scope
+from pllpython.components.divider import Divider
+from pllpython.utils.settings import Settings
+from pllpython.utils.comparators import mse, cross_correlation
+from pllpython.utils.scope import Scope
 # pylint: disable=C0301
 
 settings = Settings(name='Divider_Tester', log_path='./logs')
