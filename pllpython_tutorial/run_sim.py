@@ -6,9 +6,10 @@ import numpy as np
 
 settings = Settings(name='pll_example')
 settings.set_global_plot_mode(mode='local')
+settings.update_from_file(setting_file_path='./pllpython_tutorial/demo_settings.json')
 calc = Calculator(settings=settings)
 
-# PLL
+
 pll = Pll(settings=settings)
 pll.start_and_monitor()
 pll.show()

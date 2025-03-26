@@ -28,7 +28,7 @@ class Settings:
         self.log = {'log_path': log_path}
         self.clk = {'k_vco': 20e6,
                     'fo': 0,
-                    'white_phase_noise_spectral_density': 3E-10,
+                    'white_phase_noise_spectral_density': 3e-10,
                     'low_frequency_phase_noise': 0,
                     'plot_mode': self.global_plot_mode
                     }
@@ -49,8 +49,8 @@ class Settings:
                    'C2': 1.6e-12,
                    'R': 8400,
                    'id': 0,
-                   'max_sat': 2,
-                   'min_sat': 0.5,
+                   'max_sat': None,
+                   'min_sat': None,
                    'plot_mode': self.global_plot_mode
                    }
         self.pll = {
