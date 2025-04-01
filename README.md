@@ -19,13 +19,13 @@ source ./example_venv/bin/activate
 pip install pllpython
 ```
 
-4. Download the examples by running the following command:
+3. Download the examples by running the following command:
 
 ```
 pllpython_tutorial
 ``` 
 
-3. You should be good to go, for an out-the-box demo, run
+4. You should be good to go, for an out-the-box demo, run
 
 ```
 python pllpython_tutorial/run_sim.py
