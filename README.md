@@ -19,6 +19,12 @@ source ./example_venv/bin/activate
 pip install pllpython
 ```
 
+4. Download the examples by running the following command:
+
+```
+pllpython_tutorial
+``` 
+
 3. You should be good to go, for an out-the-box demo, run
 
 ```
